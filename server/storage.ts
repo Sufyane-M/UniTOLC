@@ -72,11 +72,19 @@ export class DatabaseStorage implements IStorage {
 
   async createUser(userData: InsertUser): Promise<User> {
     const hashedPassword = await hash(userData.password, 10);
+    // Initialize all user statistics to zero/default values
     const [user] = await db
       .insert(users)
       .values({
         ...userData,
-        password: hashedPassword
+        password: hashedPassword,
+        isPremium: false,
+        role: "user",
+        studyStreak: 0,
+        xpPoints: 0,
+        lastActive: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       })
       .returning();
     return user;

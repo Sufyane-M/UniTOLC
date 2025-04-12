@@ -5,145 +5,153 @@ import { useAuth } from "@/context/AuthContext";
 import { 
   Card, 
   CardContent, 
-  CardHeader, 
-  CardTitle, 
   CardDescription, 
-  CardFooter 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { renderMathInText } from "@/lib/katexUtil";
 import { 
-  CircleDollarSign, 
-  Award, 
+  ChevronRight, 
+  Clock, 
   CheckCircle, 
   XCircle, 
-  ChevronRight,
-  Clock,
-  BarChart3,
-  Share2
+  BarChart3, 
+  BookOpen,
+  Trophy,
+  Star,
+  Home
 } from "lucide-react";
-import { renderMathInText } from "@/lib/katexUtil";
 
-interface QuizResultsProps {
+interface ResultsPageProps {
   params: {
     id: string;
   };
 }
 
-const QuizResultsPage = ({ params }: QuizResultsProps) => {
-  const quizId = params ? parseInt(params.id) : undefined;
+const ResultsPage = ({ params }: ResultsPageProps) => {
   const [location, setLocation] = useLocation();
-  const { isAuthenticated, user } = useAuth();
-  const [showXpAnimation, setShowXpAnimation] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const attemptId = parseInt(params.id);
   
-  // Redirect if not authenticated
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       setLocation("/?auth=login");
     }
   }, [isAuthenticated, setLocation]);
   
-  // Define quiz attempt interface
-  interface QuizAttempt {
-    id: number;
-    quizId: number;
-    userId: number;
-    score: number;
-    totalQuestions: number;
-    correctAnswers: number;
-    timeSpent: number;
-    startedAt: string;
-    completed: boolean;
-    xpEarned?: number;
-    userAvgScore?: number;
-    answers: Record<number, string>;
-    quiz?: {
-      id: number;
-      title: string;
-      type: string;
-      questions: Array<{
-        id: number;
-        text: string;
-        options: string[];
-        correctAnswer: string;
-        explanation?: string;
-      }>;
-    };
-  }
-  
-  // Get quiz results data
-  const { data: quizAttempt, isLoading: attemptLoading } = useQuery<QuizAttempt>({
-    queryKey: ['/api/quiz-attempts/latest', quizId],
-    enabled: isAuthenticated && !!quizId,
-    // Using mock data for now
-    initialData: {
-      id: 1,
-      quizId: quizId || 1,
-      userId: 1,
-      score: 68,
-      totalQuestions: 10,
-      correctAnswers: 7,
-      timeSpent: 640,
-      startedAt: new Date().toISOString(),
-      completed: true,
-      xpEarned: 35,
-      userAvgScore: 72,
-      answers: { 1: "Risposta dell'utente", 2: "Un'altra risposta" },
-      quiz: {
-        id: 1,
-        title: "Simulazione TOLC-I",
-        type: "simulation",
-        questions: [
-          {
-            id: 1,
-            text: "Calcola $\\int_{0}^{1} x^2 dx$",
-            options: ["1/3", "1/2", "2/3", "1"],
-            correctAnswer: "1/3"
-          },
-          {
-            id: 2,
-            text: "Qual è la derivata di $f(x) = \\sin(x^2)$?",
-            options: [
-              "$f'(x) = 2x\\cos(x^2)$", 
-              "$f'(x) = \\cos(x^2)$", 
-              "$f'(x) = 2\\sin(x)\\cos(x)$", 
-              "$f'(x) = x^2\\cos(x^2)$"
-            ],
-            correctAnswer: "$f'(x) = 2x\\cos(x^2)$"
-          }
-        ]
-      }
-    }
+  // Ottieni i risultati del quiz dal server
+  const { data: attempt, isLoading, error } = useQuery({
+    queryKey: ['/api/quiz-attempts', attemptId],
+    enabled: isAuthenticated && !isNaN(attemptId),
   });
   
-  // XP animation on load
-  useEffect(() => {
-    if (quizAttempt) {
-      // Show XP animation after a short delay
-      setTimeout(() => {
-        setShowXpAnimation(true);
-      }, 1000);
+  // Risultati mock per demo
+  const mockAttempt = {
+    id: attemptId,
+    quizId: 1,
+    score: 75,
+    totalQuestions: 20,
+    correctAnswers: 15,
+    timeSpent: 1320, // in secondi (22 minuti)
+    startedAt: new Date().toISOString(),
+    completed: true,
+    userAnswers: [
+      { questionId: 1, correct: true, timeTaken: 25 },
+      { questionId: 2, correct: true, timeTaken: 42 },
+      { questionId: 3, correct: false, timeTaken: 118 },
+      { questionId: 4, correct: true, timeTaken: 35 },
+      { questionId: 5, correct: true, timeTaken: 47 },
+      { questionId: 6, correct: false, timeTaken: 89 },
+      { questionId: 7, correct: true, timeTaken: 53 },
+      { questionId: 8, correct: true, timeTaken: 27 },
+      { questionId: 9, correct: true, timeTaken: 62 },
+      { questionId: 10, correct: false, timeTaken: 75 },
+      { questionId: 11, correct: true, timeTaken: 42 },
+      { questionId: 12, correct: true, timeTaken: 58 },
+      { questionId: 13, correct: false, timeTaken: 63 },
+      { questionId: 14, correct: true, timeTaken: 31 },
+      { questionId: 15, correct: true, timeTaken: 39 },
+      { questionId: 16, correct: false, timeTaken: 81 },
+      { questionId: 17, correct: true, timeTaken: 47 },
+      { questionId: 18, correct: true, timeTaken: 52 },
+      { questionId: 19, correct: true, timeTaken: 36 },
+      { questionId: 20, correct: true, timeTaken: 44 },
+    ],
+    questions: [
+      { id: 1, text: "Qual è la derivata di $f(x) = x^3$?", correct: "$f'(x) = 3x^2$", topic: "Calcolo differenziale", difficulty: "media" },
+      { id: 2, text: "Qual è la soluzione dell'equazione $x^2 - 4x + 4 = 0$?", correct: "$x = 2$", topic: "Algebra", difficulty: "facile" },
+      // Altri elementi omessi per brevità
+    ],
+    quiz: {
+      title: "Simulazione TOLC-I",
+      type: "simulation",
+      subjectId: 1,
+      subject: {
+        name: "Matematica"
+      }
     }
-  }, [quizAttempt]);
+  };
   
-  // Calculate result stats
-  const percentage = quizAttempt?.score || 0;
-  const isGoodScore = percentage >= 70;
-  const isPoorScore = percentage < 50;
+  // Usa il mock finché non abbiamo dati reali
+  const quizAttempt = attempt || mockAttempt;
   
-  // Calculate time per question
-  const averageTimePerQuestion = quizAttempt?.timeSpent && quizAttempt?.totalQuestions
-    ? Math.round(quizAttempt.timeSpent / quizAttempt.totalQuestions)
-    : null;
+  // Calcola le statistiche
+  const correctAnswers = quizAttempt.correctAnswers;
+  const totalQuestions = quizAttempt.totalQuestions;
+  const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
   
-  if (!isAuthenticated) {
-    return null; // Redirect handled in useEffect
+  // Formato tempo
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  };
+  
+  // Categorizzazione delle risposte per argomento
+  const answersByTopic: Record<string, { correct: number; total: number; }> = {};
+  
+  if (quizAttempt.questions && quizAttempt.userAnswers) {
+    quizAttempt.questions.forEach((question, index) => {
+      const topic = question.topic || "Altro";
+      const userAnswer = quizAttempt.userAnswers[index];
+      
+      if (!answersByTopic[topic]) {
+        answersByTopic[topic] = { correct: 0, total: 0 };
+      }
+      
+      answersByTopic[topic].total += 1;
+      if (userAnswer && userAnswer.correct) {
+        answersByTopic[topic].correct += 1;
+      }
+    });
   }
   
-  if (attemptLoading) {
+  // Ottieni colore in base al punteggio
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return "text-green-600 dark:text-green-400";
+    if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
+    return "text-red-600 dark:text-red-400";
+  };
+  
+  // Ottieni colore per la progress bar
+  const getProgressColor = (percentage: number) => {
+    if (percentage >= 80) return "bg-green-500";
+    if (percentage >= 60) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+  
+  if (!isAuthenticated) {
+    return null; // La redirezione è gestita nell'useEffect
+  }
+  
+  if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex justify-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
@@ -151,20 +159,24 @@ const QuizResultsPage = ({ params }: QuizResultsProps) => {
     );
   }
   
-  if (!quizAttempt) {
+  if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <XCircle className="h-16 w-16 text-red-500 mb-4" />
-            <h1 className="text-2xl font-heading font-bold mb-2">Risultati non trovati</h1>
-            <p className="text-muted-foreground text-center mb-6">
-              Non è stato possibile trovare i risultati per questo quiz. Potrebbe essere stato eliminato o potresti non avere accesso.
-            </p>
-            <Button onClick={() => setLocation("/practice")}>
-              Torna alla pagina Pratica
-            </Button>
+          <CardHeader>
+            <CardTitle>Errore</CardTitle>
+            <CardDescription>
+              Si è verificato un errore nel caricamento dei risultati.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>Non è stato possibile recuperare i risultati del quiz richiesto.</p>
           </CardContent>
+          <CardFooter>
+            <Button onClick={() => setLocation("/practice")}>
+              Torna alla pratica
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     );
@@ -172,246 +184,240 @@ const QuizResultsPage = ({ params }: QuizResultsProps) => {
   
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <h1 className="text-2xl font-heading font-bold mb-6">Risultati del Quiz</h1>
+      <h1 className="text-2xl font-heading font-bold mb-6">Risultati Quiz</h1>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Colonna sinistra - Statistiche generali */}
+        <div className="col-span-1 lg:col-span-3">
           <Card className="mb-6">
-            <CardHeader>
-              <div className="flex justify-between items-start">
+            <CardHeader className="pb-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <div>
-                  <CardTitle>{quizAttempt.quiz?.title || "Quiz completato"}</CardTitle>
+                  <CardTitle>{quizAttempt.quiz?.title || "Risultati quiz"}</CardTitle>
                   <CardDescription>
-                    {new Date(quizAttempt.startedAt).toLocaleString('it-IT')}
+                    Completato il {new Date(quizAttempt.startedAt).toLocaleDateString()}
                   </CardDescription>
                 </div>
-                <Badge 
-                  variant="outline" 
-                  className={
-                    isGoodScore 
-                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" 
-                      : isPoorScore 
-                        ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" 
-                        : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
-                  }
-                >
-                  {percentage}% corretto
-                </Badge>
+                <div className="mt-3 md:mt-0 flex items-center space-x-2">
+                  <Badge variant="outline" className="bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400">
+                    {quizAttempt.quiz?.type?.charAt(0).toUpperCase() + quizAttempt.quiz?.type?.slice(1) || "Quiz"}
+                  </Badge>
+                  <Badge variant="outline">
+                    {quizAttempt.quiz?.subject?.name || "Varie"}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
+            
             <CardContent>
-              <div className="relative h-8 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-6">
-                <div 
-                  className={`absolute left-0 top-0 h-full transition-all duration-1000 ease-out ${
-                    isGoodScore 
-                      ? "bg-green-500" 
-                      : isPoorScore 
-                        ? "bg-red-500" 
-                        : "bg-yellow-500"
-                  }`}
-                  style={{ width: `${percentage}%` }}
-                ></div>
-                <div className="absolute inset-0 flex items-center justify-center font-medium text-sm">
-                  {quizAttempt.correctAnswers} su {quizAttempt.totalQuestions} domande corrette
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div className="bg-accent/50 p-4 rounded-md text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <Clock className="h-5 w-5 text-primary mr-1.5" />
-                    <span className="text-sm text-muted-foreground">Tempo</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                {/* Punteggio */}
+                <div className="bg-accent/30 rounded-lg p-5 text-center">
+                  <div className="flex justify-center mb-2">
+                    <Trophy className="h-8 w-8 text-amber-500" />
                   </div>
-                  <div className="text-lg font-semibold">
-                    {quizAttempt.timeSpent 
-                      ? `${Math.floor(quizAttempt.timeSpent / 60)}:${(quizAttempt.timeSpent % 60).toString().padStart(2, '0')}`
-                      : "N/A"}
+                  <div className={`text-3xl font-bold mb-1 ${getScoreColor(scorePercentage)}`}>
+                    {scorePercentage}%
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Punteggio totale
                   </div>
                 </div>
                 
-                <div className="bg-accent/50 p-4 rounded-md text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <Award className="h-5 w-5 text-primary mr-1.5" />
-                    <span className="text-sm text-muted-foreground">XP guadagnati</span>
+                {/* Risposte corrette */}
+                <div className="bg-accent/30 rounded-lg p-5 text-center">
+                  <div className="flex justify-center mb-2">
+                    <CheckCircle className="h-8 w-8 text-green-500" />
                   </div>
-                  <div className="text-lg font-semibold">
-                    <span className={showXpAnimation ? "text-amber-500" : ""}>
-                      +{quizAttempt.xpEarned || Math.round(percentage / 2)} XP
-                    </span>
+                  <div className="text-3xl font-bold mb-1">
+                    {correctAnswers}/{totalQuestions}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Risposte corrette
                   </div>
                 </div>
                 
-                <div className="bg-accent/50 p-4 rounded-md text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <BarChart3 className="h-5 w-5 text-primary mr-1.5" />
-                    <span className="text-sm text-muted-foreground">Media storica</span>
+                {/* Tempo impiegato */}
+                <div className="bg-accent/30 rounded-lg p-5 text-center">
+                  <div className="flex justify-center mb-2">
+                    <Clock className="h-8 w-8 text-blue-500" />
                   </div>
-                  <div className="text-lg font-semibold">
-                    {(quizAttempt.userAvgScore || 65)}%
+                  <div className="text-3xl font-bold mb-1">
+                    {formatTime(quizAttempt.timeSpent)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Tempo impiegato
                   </div>
                 </div>
               </div>
               
-              <div className="space-y-4">
-                <h3 className="font-medium text-lg">Feedback</h3>
+              {/* Performance per argomento */}
+              <div>
+                <h3 className="text-lg font-medium mb-4 flex items-center">
+                  <BarChart3 className="w-5 h-5 mr-2 text-primary" />
+                  Performance per argomento
+                </h3>
                 
-                <div>
-                  {percentage >= 80 ? (
-                    <p>Eccellente! Hai un'ottima comprensione degli argomenti trattati in questo quiz.</p>
-                  ) : percentage >= 60 ? (
-                    <p>Buon lavoro! La tua preparazione è buona, ma ci sono ancora alcuni concetti da approfondire.</p>
-                  ) : (
-                    <p>C'è ancora margine di miglioramento. Ti consigliamo di rivedere gli argomenti di questo quiz prima di procedere.</p>
-                  )}
-                </div>
-                
-                {averageTimePerQuestion && (
-                  <div className="text-sm text-muted-foreground mt-2">
-                    Hai impiegato in media {averageTimePerQuestion} secondi per domanda.
-                    {averageTimePerQuestion > 60 
-                      ? " Potresti migliorare i tuoi tempi di risposta con più esercitazione." 
-                      : " Ottimo tempo di risposta!"}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={() => setLocation("/practice")}>
-                Torna alla pratica
-              </Button>
-              <Button 
-                onClick={() => 
-                  setLocation(`/practice/${quizAttempt.quiz?.type === "simulation" ? "simulation" : "topic"}/similar`)
-                }
-              >
-                Quiz simile <ChevronRight className="ml-1.5 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          {/* Domande e risposte */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Dettaglio domande e risposte</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y">
-                {quizAttempt.answers && quizAttempt.quiz?.questions?.map((question, index) => {
-                  const userAnswer = quizAttempt.answers[question.id];
-                  const isCorrect = userAnswer === question.correctAnswer;
-                  
-                  return (
-                    <div key={question.id} className="p-4">
-                      <div className="flex items-start">
-                        <div className={`rounded-full p-1 mr-3 ${
-                          isCorrect 
-                            ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400" 
-                            : "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-                        }`}>
-                          {isCorrect 
-                            ? <CheckCircle className="h-5 w-5" /> 
-                            : <XCircle className="h-5 w-5" />}
+                <div className="space-y-4">
+                  {Object.entries(answersByTopic).map(([topic, data]) => {
+                    const percentage = Math.round((data.correct / data.total) * 100);
+                    return (
+                      <div key={topic}>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium">{topic}</span>
+                          <span className="text-sm text-muted-foreground">{data.correct}/{data.total} ({percentage}%)</span>
                         </div>
-                        <div className="flex-grow">
-                          <p className="font-medium mb-2" dangerouslySetInnerHTML={{ 
-                            __html: renderMathInText(question.text) 
-                          }} />
-                          
-                          <div className="space-y-2 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">La tua risposta:</span>
-                              <div className={`mt-1 p-2 rounded ${
-                                isCorrect 
-                                  ? "bg-green-50 dark:bg-green-900/10" 
-                                  : "bg-red-50 dark:bg-red-900/10"
-                              }`} dangerouslySetInnerHTML={{ 
-                                __html: renderMathInText(userAnswer || "Nessuna risposta") 
-                              }} />
-                            </div>
-                            
-                            {!isCorrect && (
-                              <div>
-                                <span className="text-muted-foreground">Risposta corretta:</span>
-                                <div className="mt-1 p-2 rounded bg-green-50 dark:bg-green-900/10" dangerouslySetInnerHTML={{ 
-                                  __html: renderMathInText(question.correctAnswer) 
-                                }} />
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                        <Progress 
+                          value={percentage} 
+                          className="h-2"
+                          indicatorClassName={getProgressColor(percentage)}
+                        />
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </CardContent>
+            
+            <CardFooter className="flex justify-between pt-4 border-t">
+              <Button 
+                variant="outline" 
+                onClick={() => setLocation("/practice")}
+              >
+                <Home className="w-4 h-4 mr-2" /> Torna alla pratica
+              </Button>
+              
+              <div className="flex space-x-2">
+                <Button 
+                  variant="default" 
+                  onClick={() => {
+                    // Qui si potrebbe implementare l'esportazione dei risultati
+                    alert("Funzionalità di esportazione in sviluppo");
+                  }}
+                >
+                  Rivedi risposte
+                </Button>
+                <Button 
+                  variant="default" 
+                  onClick={() => {
+                    if (quizAttempt.quiz?.type === "simulation") {
+                      setLocation("/practice/simulation");
+                    } else if (quizAttempt.quiz?.type === "topic") {
+                      setLocation("/practice/topic");
+                    } else {
+                      setLocation("/practice");
+                    }
+                  }}
+                >
+                  Riprova
+                </Button>
+              </div>
+            </CardFooter>
           </Card>
         </div>
         
-        <div className="space-y-6">
-          <Card>
+        {/* Colonna destra - Suggerimenti e prossimi passi */}
+        <div className="col-span-1">
+          <Card className="mb-6">
             <CardHeader>
-              <CardTitle>Argomenti da rivedere</CardTitle>
+              <CardTitle>Suggerimenti</CardTitle>
+              <CardDescription>
+                In base alle tue risposte
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {isPoorScore ? (
-                  <>
-                    <div className="border-l-4 border-amber-500 pl-3">
-                      <h4 className="font-medium">Calcolo integrale</h4>
-                      <p className="text-sm text-muted-foreground">Rivedere le tecniche di integrazione e le applicazioni degli integrali definiti.</p>
-                    </div>
-                    <div className="border-l-4 border-amber-500 pl-3">
-                      <h4 className="font-medium">Trigonometria</h4>
-                      <p className="text-sm text-muted-foreground">Migliorare la conoscenza delle identità fondamentali e della risoluzione delle equazioni trigonometriche.</p>
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-center text-muted-foreground py-4">
-                    Nessuna area critica rilevata in questo quiz.
+              <div className="space-y-4">
+                {/* Suggerimenti basati sulle risposte errate */}
+                <div className="border-l-4 border-primary pl-4 py-2">
+                  <h4 className="font-medium mb-1">Aree di miglioramento</h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Concentrati su questi argomenti:
                   </p>
-                )}
+                  <div className="space-y-1.5">
+                    {Object.entries(answersByTopic)
+                      .filter(([_, data]) => (data.correct / data.total) < 0.7)
+                      .map(([topic, data]) => (
+                        <div key={topic} className="flex items-center text-sm">
+                          <ChevronRight className="h-3 w-3 mr-1 text-muted-foreground" />
+                          {topic}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+                
+                {/* Consigli generali */}
+                <div className="rounded-md p-4 bg-accent/30">
+                  <h4 className="font-medium mb-2 flex items-center">
+                    <Star className="h-4 w-4 mr-1.5 text-amber-500" />
+                    Consigli
+                  </h4>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start">
+                      <BookOpen className="h-4 w-4 mr-1.5 mt-0.5 text-primary" />
+                      <span>Rivedi gli argomenti con il punteggio più basso</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Clock className="h-4 w-4 mr-1.5 mt-0.5 text-primary" />
+                      <span>Pratica con timer per migliorare la velocità</span>
+                    </li>
+                    <li className="flex items-start">
+                      <CheckCircle className="h-4 w-4 mr-1.5 mt-0.5 text-primary" />
+                      <span>Ripeti il quiz dopo una settimana per verificare i progressi</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* Prossimi passi */}
+                <div>
+                  <h4 className="font-medium mb-2">Prossimi passi</h4>
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => setLocation("/practice/topic")}
+                    >
+                      <BookOpen className="h-4 w-4 mr-1.5" />
+                      Quiz per argomento
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => setLocation("/resources")}
+                    >
+                      <BarChart3 className="h-4 w-4 mr-1.5" />
+                      Risorse di studio
+                    </Button>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Sblocca più contenuti</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-lg p-4 mb-4">
-                <div className="flex items-center mb-3">
-                  <CircleDollarSign className="h-6 w-6 mr-2" />
-                  <h3 className="text-lg font-medium">Premium</h3>
+          {/* Certificato di completamento per quiz completati con successo */}
+          {scorePercentage >= 60 && (
+            <Card className="mb-6 border-green-200 dark:border-green-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-center text-green-700 dark:text-green-400">
+                  Complimenti!
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center">
+                  <Trophy className="h-16 w-16 text-amber-500 mx-auto mb-4" />
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Hai superato il quiz con un punteggio del {scorePercentage}%!
+                  </p>
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                    +50 XP guadagnati
+                  </Badge>
                 </div>
-                <p className="mb-3 opacity-90 text-sm">
-                  Sblocca spiegazioni dettagliate, quiz avanzati e analisi approfondite delle tue prestazioni.
-                </p>
-                <Button 
-                  className="w-full bg-white text-amber-600 hover:bg-amber-50 border-none"
-                  onClick={() => setLocation("/settings?tab=premium")}
-                >
-                  Sblocca a soli €5/mese
-                </Button>
-              </div>
-              
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => window.navigator.share?.({
-                  title: 'I miei risultati su TolcPrep',
-                  text: `Ho totalizzato ${percentage}% in un quiz su TolcPrep!`
-                }).catch(() => {})}
-              >
-                <Share2 className="h-4 w-4 mr-1.5" /> Condividi risultati
-              </Button>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default QuizResultsPage;
+export default ResultsPage;
