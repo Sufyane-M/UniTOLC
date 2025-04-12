@@ -133,23 +133,68 @@ const QuizContainer = ({ quizId, demoMode = false }: QuizContainerProps) => {
     }
   };
   
-  const handleSubmitQuiz = () => {
+  const handleSubmitQuiz = async () => {
     if (demoMode) {
       // In modalità demo non facciamo nulla
       return;
     }
     
-    // TODO: Invia i risultati al backend
-    setQuizSubmitted(true);
-    
-    toast({
-      title: "Quiz completato",
-      description: "I tuoi risultati sono stati salvati.",
-    });
-    
-    // Redirect alla pagina dei risultati
-    if (quizId) {
-      setLocation(`/practice/results/${quizId}`);
+    try {
+      // Calcola il punteggio
+      const totalQuestions = quiz?.questions.length || 0;
+      let correctAnswers = 0;
+      
+      quiz?.questions.forEach(question => {
+        if (selectedAnswers[question.id] === question.correctAnswer) {
+          correctAnswers++;
+        }
+      });
+      
+      const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+      
+      // Prepara i dati per l'invio
+      const attemptData = {
+        quizId: quizId,
+        score: score,
+        totalQuestions: totalQuestions,
+        correctAnswers: correctAnswers,
+        timeSpent: quiz?.timeLimit ? quiz.timeLimit - (timeRemaining || 0) : null,
+        answers: selectedAnswers
+      };
+      
+      // Invia i risultati al backend
+      await fetch('/api/quiz-attempts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(attemptData),
+      });
+      
+      setQuizSubmitted(true);
+      
+      toast({
+        title: "Quiz completato",
+        description: `Hai totalizzato ${score}% (${correctAnswers}/${totalQuestions} corrette)`,
+      });
+      
+      // Aggiorna i dati dell'utente in AuthContext
+      // Questo avverrà automaticamente alla prossima richiesta all'API
+      
+      // Redirect alla pagina dei risultati
+      if (quizId) {
+        // Breve delay per dare tempo al toast di essere visualizzato
+        setTimeout(() => {
+          setLocation(`/practice/results/${quizId}`);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      toast({
+        title: "Errore",
+        description: "Si è verificato un errore durante il salvataggio dei risultati. Riprova più tardi.",
+        variant: "destructive"
+      });
     }
   };
   

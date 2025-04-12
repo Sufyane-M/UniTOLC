@@ -73,7 +73,7 @@ const SimulationPage = () => {
   }, [isAuthenticated, setLocation]);
   
   // Ottieni le simulazioni disponibili per il tipo di esame selezionato
-  const { data: simulations, isLoading } = useQuery({
+  const { data: simulations = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/quizzes', { type: 'simulation', examType: selectedExamType }],
     enabled: isAuthenticated,
   });

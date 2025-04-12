@@ -23,6 +23,7 @@ import NotFound from "@/pages/not-found";
 const PracticeSimulation = lazy(() => import("@/pages/practice/simulation"));
 const PracticeTopic = lazy(() => import("@/pages/practice/topic"));
 const PracticeFlashcards = lazy(() => import("@/pages/practice/flashcards"));
+const PracticeResults = lazy(() => import("@/pages/practice/results"));
 
 function Router() {
   return (
@@ -45,6 +46,14 @@ function Router() {
           <PracticeFlashcards />
         </Suspense>
       )} />
+      <Route path="/practice/results/:id" component={(params) => {
+        const id = params.params.id;
+        return (
+          <Suspense fallback={<div className="flex justify-center py-12"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
+            <PracticeResults params={{ id }} />
+          </Suspense>
+        );
+      }} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/resources" component={Resources} />
       <Route path="/community" component={Community} />

@@ -74,7 +74,7 @@ const TopicQuizPage = () => {
   }, [isAuthenticated, setLocation]);
   
   // Ottieni i quiz disponibili per gli argomenti selezionati
-  const { data: topicQuizzes, isLoading } = useQuery({
+  const { data: topicQuizzes = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/quizzes', { type: 'topic', topics: selectedTopics }],
     enabled: isAuthenticated && selectedTopics.length > 0,
   });
