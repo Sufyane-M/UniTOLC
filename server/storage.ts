@@ -96,6 +96,19 @@ export class DatabaseStorage implements IStorage {
       .set(userData)
       .where(eq(users.id, id))
       .returning();
+    
+    // Send real-time update to the user if connected via WebSocket
+    if (user && (global as any).sendUserUpdate) {
+      // Get updated user without password
+      const { password, ...userWithoutPassword } = user;
+      
+      // Send user update via WebSocket
+      (global as any).sendUserUpdate(id, {
+        type: 'user_stats',
+        user: userWithoutPassword
+      });
+    }
+    
     return user;
   }
 
@@ -174,7 +187,83 @@ export class DatabaseStorage implements IStorage {
       .insert(userQuizAttempts)
       .values(attempt as any)
       .returning();
+    
+    // Update user statistics in real-time after completing a quiz attempt
+    if (attempt.userId && attempt.completed) {
+      // Calculate XP gained based on correct answers and quiz type
+      const xpGained = attempt.correctAnswers || 0;
+      
+      // Get current user stats
+      const user = await this.getUser(attempt.userId);
+      if (user) {
+        // Update user XP, lastActive and other relevant stats
+        await this.updateUser(user.id, {
+          xpPoints: (user.xpPoints || 0) + xpGained,
+          lastActive: new Date().toISOString(),
+          // Increment studyStreak if it's a new day since last activity
+          studyStreak: this.shouldIncrementStreak(user.lastActive) 
+            ? (user.studyStreak || 0) + 1 
+            : user.studyStreak
+        });
+        
+        // If accuracy is below threshold, add to weak areas
+        if (attempt.score && attempt.score < 70 && attempt.quizId) {
+          const quiz = await this.getQuiz(attempt.quizId);
+          if (quiz && quiz.topicId) {
+            // Check if weak area already exists
+            const existingWeakAreas = await db
+              .select()
+              .from(weakAreas)
+              .where(
+                and(
+                  eq(weakAreas.userId, attempt.userId),
+                  eq(weakAreas.topicId, quiz.topicId)
+                )
+              );
+            
+            if (existingWeakAreas.length > 0) {
+              // Update existing weak area
+              await db
+                .update(weakAreas)
+                .set({
+                  accuracy: attempt.score,
+                  lastUpdated: new Date().toISOString()
+                })
+                .where(eq(weakAreas.id, existingWeakAreas[0].id));
+            } else {
+              // Create new weak area
+              await db
+                .insert(weakAreas)
+                .values({
+                  userId: attempt.userId,
+                  topicId: quiz.topicId,
+                  accuracy: attempt.score,
+                  lastUpdated: new Date().toISOString()
+                });
+            }
+          }
+        }
+      }
+    }
+    
     return newAttempt;
+  }
+  
+  // Helper method to determine if streak should be incremented
+  private shouldIncrementStreak(lastActive?: string): boolean {
+    if (!lastActive) return true;
+    
+    const now = new Date();
+    const lastActiveDate = new Date(lastActive);
+    
+    // Check if last active was yesterday (or earlier)
+    const lastActiveDay = new Date(lastActiveDate.getFullYear(), lastActiveDate.getMonth(), lastActiveDate.getDate());
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const differenceInTime = today.getTime() - lastActiveDay.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    
+    // Increment if last active was yesterday (streak continues) or if it's the first activity
+    return differenceInDays === 1 || differenceInDays === 0;
   }
 
   async getUserQuizAttempts(userId: number): Promise<UserQuizAttempt[]> {
@@ -217,6 +306,29 @@ export class DatabaseStorage implements IStorage {
         challengeId,
       })
       .returning();
+    
+    // Get the challenge details to award XP in real-time
+    const [challenge] = await db
+      .select()
+      .from(dailyChallenges)
+      .where(eq(dailyChallenges.id, challengeId));
+    
+    if (challenge) {
+      // Get current user stats
+      const user = await this.getUser(userId);
+      if (user) {
+        // Award XP for completing the challenge and update lastActive
+        await this.updateUser(user.id, {
+          xpPoints: (user.xpPoints || 0) + (challenge.xpReward || 10),
+          lastActive: new Date().toISOString(),
+          // Also update study streak
+          studyStreak: this.shouldIncrementStreak(user.lastActive) 
+            ? (user.studyStreak || 0) + 1 
+            : user.studyStreak
+        });
+      }
+    }
+    
     return completion;
   }
 

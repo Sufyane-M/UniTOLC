@@ -5,6 +5,7 @@ import session from "express-session";
 import MemoryStore from "memorystore";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { WebSocketServer, WebSocket } from "ws";
 import { insertUserSchema, loginUserSchema, insertUserExamSchema, insertQuizSchema } from "@shared/schema";
 import { format, parseISO, differenceInDays } from "date-fns";
 import { it } from "date-fns/locale";
@@ -403,6 +404,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create HTTP server
   const httpServer = createServer(app);
+  
+  // Setup WebSocket server for real-time updates
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  // Create a map to track connections by user ID
+  const userConnections = new Map<number, WebSocket[]>();
+  
+  wss.on('connection', (ws: WebSocket) => {
+    let userId: number | null = null;
+    
+    ws.on('message', (message: string) => {
+      try {
+        const data = JSON.parse(message);
+        
+        // Handle authentication message to link connection to user
+        if (data.type === 'auth' && data.userId) {
+          userId = data.userId;
+          
+          // Add this connection to the user's connections
+          if (!userConnections.has(userId)) {
+            userConnections.set(userId, []);
+          }
+          userConnections.get(userId)?.push(ws);
+          
+          // Send initial data to the client
+          ws.send(JSON.stringify({
+            type: 'connection_established',
+            message: 'Successfully connected for real-time updates'
+          }));
+        }
+      } catch (error) {
+        console.error('WebSocket message error:', error);
+      }
+    });
+    
+    // Handle disconnect
+    ws.on('close', () => {
+      if (userId) {
+        // Remove this connection from the user's connections
+        const connections = userConnections.get(userId);
+        if (connections) {
+          const index = connections.indexOf(ws);
+          if (index !== -1) {
+            connections.splice(index, 1);
+          }
+          
+          // If no more connections for this user, remove the user entry
+          if (connections.length === 0) {
+            userConnections.delete(userId);
+          }
+        }
+      }
+    });
+  });
+  
+  // Export the function to send updates to users in real-time
+  (global as any).sendUserUpdate = (userId: number, data: any) => {
+    const connections = userConnections.get(userId);
+    if (connections && connections.length > 0) {
+      const message = JSON.stringify({
+        type: 'user_update',
+        data
+      });
+      
+      connections.forEach(conn => {
+        if (conn.readyState === WebSocket.OPEN) {
+          conn.send(message);
+        }
+      });
+    }
+  };
+  
   return httpServer;
 }
