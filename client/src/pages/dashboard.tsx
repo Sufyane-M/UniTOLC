@@ -7,6 +7,7 @@ import StudyRecommendations from "@/components/dashboard/StudyRecommendations";
 import WeakAreasQuickPractice from "@/components/dashboard/WeakAreasQuickPractice";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import ProgressOverview from "@/components/dashboard/ProgressOverview";
+import { UserStatsDisplay } from "@/components/dashboard/UserStatsDisplay";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -95,8 +96,13 @@ const Dashboard = () => {
         
         {/* Bottom section: Recent activity and Progress overview */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <RecentActivity />
-          <ProgressOverview />
+          <div className="lg:col-span-2">
+            <RecentActivity />
+          </div>
+          <div className="space-y-6">
+            <UserStatsDisplay />
+            <ProgressOverview />
+          </div>
         </div>
       </div>
       

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -40,7 +40,84 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const { toast } = useToast();
+
+  // Update user stats from WebSocket data
+  const handleUserStatsUpdate = useCallback((data: any) => {
+    if (data.type === 'user_stats' && data.user) {
+      setUser(prevUser => {
+        if (prevUser && prevUser.id === data.user.id) {
+          // Update only stats fields, keeping the rest of the user data intact
+          return {
+            ...prevUser,
+            xpPoints: data.user.xpPoints,
+            studyStreak: data.user.studyStreak,
+            lastActive: data.user.lastActive
+          };
+        }
+        return prevUser;
+      });
+    }
+  }, []);
+
+  // Setup WebSocket connection for real-time updates
+  useEffect(() => {
+    if (!user) {
+      if (socket) {
+        socket.close();
+        setSocket(null);
+      }
+      return;
+    }
+
+    // Create WebSocket connection
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      // Authenticate the connection with user ID
+      ws.send(JSON.stringify({
+        type: 'auth',
+        userId: user.id
+      }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        console.log('WebSocket message received:', message);
+        
+        // Handle different message types
+        if (message.type === 'user_update') {
+          handleUserStatsUpdate(message.data);
+        } else if (message.type === 'connection_established') {
+          console.log('WebSocket authenticated successfully');
+        }
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+
+    setSocket(ws);
+
+    // Cleanup on unmount
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, [user, handleUserStatsUpdate]);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -94,6 +171,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = async (): Promise<void> => {
     try {
       await apiRequest("POST", "/api/auth/logout", {});
+      
+      // Close WebSocket connection on logout
+      if (socket) {
+        socket.close();
+        setSocket(null);
+      }
+      
       setUser(null);
       toast({
         title: "Logout effettuato",
