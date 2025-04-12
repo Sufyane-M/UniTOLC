@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Lock, Crown } from "lucide-react";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import { renderMathInText } from "@/lib/katexUtil";
 
 interface QuizQuestionProps {
   question: {
@@ -36,13 +37,25 @@ const QuizQuestion = ({
   
   const isCorrect = selectedAnswer === question.correctAnswer;
   
+  // Process text with KaTeX for math rendering
+  const [processedQuestionText, setProcessedQuestionText] = useState(question.text);
+  const [processedOptions, setProcessedOptions] = useState<string[]>(question.options);
+  
+  useEffect(() => {
+    // Process the question text with KaTeX
+    setProcessedQuestionText(renderMathInText(question.text));
+    
+    // Process each option with KaTeX
+    setProcessedOptions(question.options.map(option => renderMathInText(option)));
+  }, [question]);
+  
   return (
     <div>
       <div className="mb-1 flex justify-between items-center text-sm text-muted-foreground">
         <span>Domanda {questionNumber} di {totalQuestions}</span>
       </div>
       
-      <div className="text-base mb-4 font-medium" dangerouslySetInnerHTML={{ __html: question.text }} />
+      <div className="text-base mb-4 font-medium" dangerouslySetInnerHTML={{ __html: processedQuestionText }} />
       
       <RadioGroup
         value={selectedAnswer}
@@ -75,7 +88,7 @@ const QuizQuestion = ({
               <Label 
                 htmlFor={`option-${question.id}-${optionLetter}`}
                 className="ml-3 cursor-pointer flex-grow"
-                dangerouslySetInnerHTML={{ __html: option }}
+                dangerouslySetInnerHTML={{ __html: processedOptions[index] }}
               />
             </div>
           );
@@ -104,7 +117,7 @@ const QuizQuestion = ({
             </div>
           ) : (
             <div className="text-sm text-muted-foreground">
-              <p dangerouslySetInnerHTML={{ __html: question.explanation?.replace(/\n/g, '<br />') || "" }} />
+              <p dangerouslySetInnerHTML={{ __html: renderMathInText(question.explanation?.replace(/\n/g, '<br />') || "") }} />
             </div>
           )}
         </div>

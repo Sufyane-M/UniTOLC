@@ -53,7 +53,7 @@ const Navbar = () => {
             </div>
             
             {/* Desktop navigation */}
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-4">
+            <div className="hidden mx-auto sm:ml-6 sm:flex sm:space-x-6 sm:justify-center">
               <Link href="/dashboard">
                 <a className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
                   activeSection === "dashboard" 
