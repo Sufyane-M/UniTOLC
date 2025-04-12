@@ -1,0 +1,90 @@
+Crea un'applicazione web completa per aiutare gli studenti italiani nella preparazione agli esami di ammissione universitari TOLC. L’app deve fornire percorsi di studio personalizzati, test di simulazione interattivi e tracking dettagliato delle performance. La web-app andrà a servire sia utenti regolari sia amministratori, e prevede un modello freemium con abbonamento premium a €5/mese.
+
+### Specifiche funzionali
+
+1. **Sistema di Autenticazione**
+   - Implementa flusso completo di login, registrazione e reset della password.
+   - Gestisci due ruoli: utenti “normali” e amministratori (con possibilità di promozione da admin).
+   - Includi un sistema di onboarding che raccolga informazioni come tipo di esame, data dell’esame e aree di debolezza.
+   - Abilita il pagamento ricorrente per il piano premium.
+
+2. **Dashboard Personalizzata**
+   - Mostra raccomandazioni di studio in base alle performance individuali.
+   - Visualizza un “ExamCountdown” che indichi quanti giorni mancano all’esame selezionato.
+   - Presenta una panoramica dei progressi con percentuale di completamento, streak di studio e analisi di aree forti/deboli.
+   - Includi una sezione di pratica rapida focalizzata sulle aree di debolezza e sfide giornaliere con elementi di gamification (streak, premi in XP).
+
+3. **Sezione Pratica (Quiz)**
+   - Offri multiple modalità di quiz: simulazioni a tempo per ricreare le condizioni dell’esame, pratica su argomenti specifici e flashcards.
+   - Realizza un’interfaccia interattiva con feedback immediato per ogni domanda.
+   - Per gli utenti premium, fornisci spiegazioni dettagliate ad ogni risposta e statistiche di performance post-quiz.
+
+4. **Analytics e Statistiche**
+   - Traccia le performance degli utenti nel tempo e mostra progressi e statistiche (tempo di studio, aree deboli/forti).
+   - Implementa visualizzazioni grafiche per l’analisi dei dati (ad es. grafici a barre, a torta o lineari).
+
+5. **Pannello Amministrativo**
+   - Consenti la gestione degli utenti (creazione, promozione, disattivazione).
+   - Permetti la gestione dei contenuti per i quiz, i materiali di teoria e visualizza un dashboard di analytics per l’uso della piattaforma.
+
+6. **Pagine Aggiuntive**
+   - Landing page per utenti non autenticati, con hero section, descrizione delle funzionalità, testimonianze, piani/prezzi e FAQ.
+   - Pagina informativa sugli esami TOLC.
+   - Sezione “Risorse” con materiali di studio.
+   - Pagina Community per interazione tra utenti.
+   - Sezione Blog e FAQ.
+   - Pagine per settings e gestione del profilo.
+
+7. **Funzionalità Premium**
+   - Testi esplicativi dettagliati per ogni domanda dei quiz.
+   - Analytics avanzate, piani di studio personalizzati.
+   - Integrazione di contenuti teorici direttamente collegati ai test pratici.
+   - Accesso illimitato ai test di pratica.
+
+### Requisiti UI/UX e Design System
+
+- **Librerie e Framework:** Utilizza Next.js per il frontend e React per i componenti. Integra ShadCN UI per i componenti e Tailwind CSS per lo styling.
+- **Design:** 
+  - Interfaccia pulita e moderna, con supporto a modalità chiara e scura.
+  - Tutto il testo e le interfacce devono essere in italiano.
+  - Usa una palette di colori coerente con colori primari, secondari e di accento ben definiti.
+  - Implementa una tipografia e spaziatura coerenti.
+- **Componenti Specifici:** Crea componenti riutilizzabili quali:
+  - **Navbar** dinamica che mostra link differenti in base allo stato di autenticazione.
+  - **ExamCountdown** per il conto alla rovescia dell’esame.
+  - **ProgressOverview** per la visualizzazione delle statistiche di studio.
+  - **WeakAreasQuickPractice** per la pratica mirata sulle aree deboli.
+  - **StudyRecommendations** basate sulle performance.
+  - **DailyChallenge** per le sfide giornaliere.
+  - **QuizContainer** e **QuizQuestion** per la gestione dei test con feedback immediato.
+  - **AuthModal** per login e registrazione.
+  - **PremiumFeatureTeaser** per promuovere l’abbonamento premium.
+  - **StudyStatsCard** per visualizzare le statistiche di apprendimento.
+  - **AdminForms** per la gestione degli utenti e dei contenuti.
+
+### Requisiti Tecnici e Integrazioni
+
+- **Responsive Design:** Assicurare compatibilità e usabilità su desktop (1200px+), tablet (768px - 1199px) e mobile (320px - 767px).
+- **Supabase Integration:**
+  - Configura l’autenticazione tramite email/password con Supabase.
+  - Crea le tabelle necessarie per utenti, statistiche di studio, quiz, contenuti teorici, etc.
+  - Implementa aggiornamenti in tempo reale per dati rilevanti.
+  - Utilizza Supabase Storage per la gestione di eventuali media.
+- **Gestione Errori e Accessibilità:** Includi stati di caricamento, gestione degli errori e rispetta gli standard di accessibilità.
+
+### Aspetti Tecnici di Generazione del Codice
+
+- Fornisci un’architettura modulare e componibile, con separazione chiara tra componenti di UI e logica di business.
+- Commenta il codice ove opportuno e utilizza best practices per React, Next.js e l’integrazione con Supabase.
+- Se possibile, sfrutta le funzionalità di ISR (Incremental Static Regeneration) di Next.js per le pagine pubbliche.
+- Integra librerie di terze parti come Lucide React per le icone e, se necessario, utilizza animazioni con Framer Motion per animazioni del componente.
+
+### Istruzioni Finali
+
+- Il codice generato dovrà essere organizzato in un progetto Next.js ben strutturato.
+- Fornisci una documentazione inline e/o un README che illustri le scelte progettuali e come avviare il progetto.
+- Assicurati che tutte le stringhe di testo e le interfacce siano in italiano.
+
+---
+
+Ti prego di generare i componenti UI e il codice necessario per realizzare questo progetto, seguendo le specifiche sopra indicate. Se hai bisogno di ulteriori precisazioni o di riformulare qualche punto per rispettare al meglio le best practices, procedi con le modifiche consigliate.
