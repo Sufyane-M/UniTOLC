@@ -31,23 +31,23 @@ const Footer = () => {
             <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Esami TOLC</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/resources?type=TOLC-I">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">TOLC-I</a>
+                <Link href="/resources?type=TOLC-I" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  TOLC-I
                 </Link>
               </li>
               <li>
-                <Link href="/resources?type=TOLC-E">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">TOLC-E</a>
+                <Link href="/resources?type=TOLC-E" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  TOLC-E
                 </Link>
               </li>
               <li>
-                <Link href="/resources?type=TOLC-F">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">TOLC-F</a>
+                <Link href="/resources?type=TOLC-F" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  TOLC-F
                 </Link>
               </li>
               <li>
-                <Link href="/resources?type=ENGLISH-TOLC">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">English TOLC</a>
+                <Link href="/resources?type=ENGLISH-TOLC" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  English TOLC
                 </Link>
               </li>
             </ul>
@@ -57,23 +57,23 @@ const Footer = () => {
             <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Risorse</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/resources?section=blog">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Blog</a>
+                <Link href="/resources?section=blog" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  Blog
                 </Link>
               </li>
               <li>
-                <Link href="/community">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Community</a>
+                <Link href="/community" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  Community
                 </Link>
               </li>
               <li>
-                <Link href="/resources?section=guide">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Guide</a>
+                <Link href="/resources?section=guide" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  Guide
                 </Link>
               </li>
               <li>
-                <Link href="/resources?section=faq">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">FAQ</a>
+                <Link href="/resources?section=faq" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  FAQ
                 </Link>
               </li>
             </ul>
@@ -83,18 +83,18 @@ const Footer = () => {
             <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Supporto</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/contatti">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Contatti</a>
+                <Link href="/contatti" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  Contatti
                 </Link>
               </li>
               <li>
-                <Link href="/privacy">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Privacy Policy</a>
+                <Link href="/privacy" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/termini">
-                  <a className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Termini di servizio</a>
+                <Link href="/termini" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+                  Termini di servizio
                 </Link>
               </li>
             </ul>

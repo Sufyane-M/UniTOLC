@@ -1,0 +1,55 @@
+WebSocket connection to 'wss://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/?token=HpPvPOITNlQM' failed: 
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=HpPvPOITNlQM' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+
+chunk-WERSD76P.js?v=48d65aab:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+chunk-WERSD76P.js?v=48d65aab:521 Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+    at a
+    at a
+    at https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=48d65aab:337:18
+    at li
+    at ul
+    at div
+    at div
+    at div
+    at footer
+    at Footer
+    at div
+    at AuthProvider (https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/src/context/AuthContext.tsx?t=1744482141895:22:32)
+    at QueryClientProvider (https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=48d65aab:2805:3)
+    at App
+/api/auth/user:1 
+ Failed to load resource: the server responded with a status of 401 (Unauthorized)
+/analytics:1 [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) 
+AuthContext.tsx:80 WebSocket connected
+AuthContext.tsx:91 WebSocket message received: 
+Object
+AuthContext.tsx:97 WebSocket authenticated successfully
+/api/exams:1 
+ Failed to load resource: the server responded with a status of 404 (Not Found)
+AuthContext.tsx:109 WebSocket disconnected
+1e4d7961-7360-43ee-a…riker.replit.dev/:1 [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq)
+1e4d7961-7360-43ee-a…riker.replit.dev/:1 [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) 
+/api/auth/register:1 
+ Failed to load resource: the server responded with a status of 400 (Bad Request)
+AuthContext.tsx:166 Registration error: Error: 400: {"message":"Username già in uso"}
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:22:3)
+    at async register (AuthContext.tsx:161:24)
+    at async handleRegisterSubmit (AuthModal.tsx:88:23)
+/api/auth/register:1 
+ Failed to load resource: the server responded with a status of 400 (Bad Request)
+AuthContext.tsx:166 Registration error: Error: 400: {"message":"Username già in uso"}
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:22:3)
+    at async register (AuthContext.tsx:161:24)
+    at async handleRegisterSubmit (AuthModal.tsx:88:23)
+/api/auth/register:1 
+ Failed to load resource: the server responded with a status of 400 (Bad Request)
+AuthContext.tsx:166 Registration error: Error: 400: {"message":"Username già in uso"}
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:22:3)
+    at async register (AuthContext.tsx:161:24)
+    at async handleRegisterSubmit (AuthModal.tsx:88:23)

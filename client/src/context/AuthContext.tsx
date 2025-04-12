@@ -72,8 +72,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     // Create WebSocket connection
+    // Use current window location to properly handle Replit's domain
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const host = window.location.host;
+    const wsUrl = `${protocol}//${host}/ws`;
+    console.log('Connecting to WebSocket at:', wsUrl);
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {

@@ -408,17 +408,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   
   // Setup WebSocket server for real-time updates
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  const wss = new WebSocketServer({ 
+    server: httpServer, 
+    path: '/ws',
+    // Critical for Replit environment
+    perMessageDeflate: false
+  });
   
   // Create a map to track connections by user ID
-  const userConnections = new Map<number, WebSocket[]>();
+  const userConnections = new Map<number, Set<WebSocket>>();
   
   wss.on('connection', (ws: WebSocket) => {
+    console.log('WebSocket connection established');
     let userId: number | null = null;
     
     ws.on('message', (message: string) => {
       try {
-        const data = JSON.parse(message);
+        const data = JSON.parse(message.toString());
+        console.log('Received WebSocket message:', data);
         
         // Handle authentication message to link connection to user
         if (data.type === 'auth' && data.userId) {
@@ -426,9 +433,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Add this connection to the user's connections
           if (!userConnections.has(userId)) {
-            userConnections.set(userId, []);
+            userConnections.set(userId, new Set());
           }
-          userConnections.get(userId)?.push(ws);
+          userConnections.get(userId)?.add(ws);
+          
+          console.log(`User ${userId} connected via WebSocket, current connections:`, userConnections.size);
           
           // Send initial data to the client
           ws.send(JSON.stringify({
@@ -441,21 +450,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
     
+    // Handle errors
+    ws.on('error', (error) => {
+      console.error('WebSocket error:', error);
+    });
+    
     // Handle disconnect
     ws.on('close', () => {
+      console.log('WebSocket connection closed');
       if (userId) {
         // Remove this connection from the user's connections
         const connections = userConnections.get(userId);
         if (connections) {
-          const index = connections.indexOf(ws);
-          if (index !== -1) {
-            connections.splice(index, 1);
-          }
+          connections.delete(ws);
           
           // If no more connections for this user, remove the user entry
-          if (connections.length === 0) {
+          if (connections.size === 0) {
             userConnections.delete(userId);
           }
+          console.log(`User ${userId} disconnected, remaining connections:`, userConnections.size);
         }
       }
     });
@@ -464,7 +477,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Export the function to send updates to users in real-time
   (global as any).sendUserUpdate = (userId: number, data: any) => {
     const connections = userConnections.get(userId);
-    if (connections && connections.length > 0) {
+    if (connections && connections.size > 0) {
       const message = JSON.stringify({
         type: 'user_update',
         data
@@ -472,7 +485,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       connections.forEach(conn => {
         if (conn.readyState === WebSocket.OPEN) {
-          conn.send(message);
+          try {
+            conn.send(message);
+            console.log(`Sent update to user ${userId}:`, data);
+          } catch (error) {
+            console.error(`Error sending update to user ${userId}:`, error);
+            // Remove problematic connection
+            connections.delete(conn);
+          }
         }
       });
     }
