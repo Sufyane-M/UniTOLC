@@ -1,0 +1,75 @@
+chunk-WERSD76P.js?v=48d65aab:521 Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
+    at a
+    at a
+    at https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=48d65aab:337:18
+    at div
+    at div
+    at div
+    at div
+    at nav
+    at Navbar (https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/src/components/layout/Navbar.tsx?t=1744480734615:30:35)
+    at div
+    at AuthProvider (https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/src/context/AuthContext.tsx:22:32)
+    at QueryClientProvider (https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=48d65aab:2805:3)
+    at App
+printWarning @ chunk-WERSD76P.js?v=48d65aab:521Understand this error
+api/quizzes/1:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 (Not Found)Understand this error
+queryClient.ts:32 
+            
+            
+           GET https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/api/exams 404 (Not Found)
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=48d65aab:840
+run @ @tanstack_react-query.js?v=48d65aab:494
+start @ @tanstack_react-query.js?v=48d65aab:536
+fetch @ @tanstack_react-query.js?v=48d65aab:926
+executeFetch_fn @ @tanstack_react-query.js?v=48d65aab:2211
+onSubscribe @ @tanstack_react-query.js?v=48d65aab:1898
+subscribe @ @tanstack_react-query.js?v=48d65aab:24
+(anonymous) @ @tanstack_react-query.js?v=48d65aab:3022
+subscribeToStore @ chunk-WERSD76P.js?v=48d65aab:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=48d65aab:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=48d65aab:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=48d65aab:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=48d65aab:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=48d65aab:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=48d65aab:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=48d65aab:19447
+commitRootImpl @ chunk-WERSD76P.js?v=48d65aab:19416
+commitRoot @ chunk-WERSD76P.js?v=48d65aab:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=48d65aab:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=48d65aab:9119
+(anonymous) @ chunk-WERSD76P.js?v=48d65aab:18627Understand this error
+queryClient.ts:32 
+            
+            
+           GET https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/api/exams 404 (Not Found)
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=48d65aab:840
+run @ @tanstack_react-query.js?v=48d65aab:494
+start @ @tanstack_react-query.js?v=48d65aab:536
+fetch @ @tanstack_react-query.js?v=48d65aab:926
+executeFetch_fn @ @tanstack_react-query.js?v=48d65aab:2211
+onSubscribe @ @tanstack_react-query.js?v=48d65aab:1898
+subscribe @ @tanstack_react-query.js?v=48d65aab:24
+(anonymous) @ @tanstack_react-query.js?v=48d65aab:3022
+subscribeToStore @ chunk-WERSD76P.js?v=48d65aab:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=48d65aab:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=48d65aab:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=48d65aab:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=48d65aab:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=48d65aab:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=48d65aab:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=48d65aab:19447
+commitRootImpl @ chunk-WERSD76P.js?v=48d65aab:19416
+commitRoot @ chunk-WERSD76P.js?v=48d65aab:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=48d65aab:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=48d65aab:9119
+(anonymous) @ chunk-WERSD76P.js?v=48d65aab:18627Understand this error
+queryClient.ts:32 
+            
+            
+           GET https://1e4d7961-7360-43ee-a14f-a1ab70a17d51-00-3s19gltijge6t.riker.replit.dev/api/exams 404 (Not Found)

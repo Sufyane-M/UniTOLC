@@ -129,7 +129,7 @@ const WeakAreasQuickPractice = () => {
             <Link href="/settings">
               <Button 
                 size="sm" 
-                className="relative z-10 bg-white text-primary-700 hover:bg-primary-50"
+                className="relative z-10 bg-white text-primary-700 hover:bg-primary-50 dark:text-primary-700 dark:hover:text-primary-800"
               >
                 <Crown className="h-4 w-4 mr-1.5" /> Passa a Premium
               </Button>

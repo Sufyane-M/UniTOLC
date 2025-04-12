@@ -5,349 +5,348 @@ import { useAuth } from "@/context/AuthContext";
 import { 
   Card, 
   CardContent, 
+  CardDescription, 
+  CardFooter, 
   CardHeader, 
-  CardTitle, 
-  CardDescription,
-  CardFooter 
+  CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Check, X, BookMarked, RefreshCw, ArrowRight, Lightbulb } from "lucide-react";
 import { renderMathInText } from "@/lib/katexUtil";
-import { Layers, CheckCircle, XCircle, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Flashcard data structure
-interface Flashcard {
-  id: number;
-  front: string;
-  back: string;
-  subject: string;
-  topic: string;
-}
+// Mock dei soggetti per le flashcards
+const subjects = [
+  { id: 1, name: "Matematica" },
+  { id: 2, name: "Fisica" },
+  { id: 3, name: "Chimica" },
+  { id: 4, name: "Logica" }
+];
 
-// Mock flashcards for demonstration
-const mockFlashcards: Flashcard[] = [
+// Mock delle flashcards
+const mockFlashcards = [
   {
     id: 1,
-    front: "Derivata della funzione $f(x) = \\sin(x)$",
-    back: "La derivata di $\\sin(x)$ è $f'(x) = \\cos(x)$",
+    question: "Qual è la derivata di $f(x) = x^2$?",
+    answer: "$f'(x) = 2x$",
     subject: "Matematica",
-    topic: "Analisi matematica"
+    topic: "Calcolo differenziale"
   },
   {
     id: 2,
-    front: "Definizione di integrale definito",
-    back: "L'integrale definito di una funzione $f(x)$ nell'intervallo $[a,b]$ è definito come $\\int_{a}^{b} f(x) dx = \\lim_{n \\to \\infty} \\sum_{i=1}^{n} f(x_i) \\Delta x$",
+    question: "Qual è l'integrale di $f(x) = 2x$?",
+    answer: "$\\int 2x \\, dx = x^2 + C$",
     subject: "Matematica",
     topic: "Calcolo integrale"
   },
   {
     id: 3,
-    front: "Prima legge di Newton",
-    back: "Un corpo permane nel suo stato di quiete o di moto rettilineo uniforme a meno che non sia costretto a cambiare tale stato da forze applicate su di esso.",
+    question: "Enuncia la seconda legge di Newton",
+    answer: "La forza netta applicata a un corpo è uguale al prodotto della sua massa per la sua accelerazione: $F = ma$",
     subject: "Fisica",
     topic: "Meccanica"
   },
   {
     id: 4,
-    front: "Legge di Coulomb",
-    back: "La forza elettrica tra due cariche puntiformi è direttamente proporzionale al prodotto delle cariche e inversamente proporzionale al quadrato della loro distanza: $F = k \\frac{q_1 q_2}{r^2}$",
-    subject: "Fisica",
-    topic: "Elettromagnetismo"
+    question: "Quali sono gli elementi della tavola periodica con un elettrone nell'orbitale più esterno?",
+    answer: "Gli elementi del gruppo 1 (metalli alcalini): Li, Na, K, Rb, Cs, Fr",
+    subject: "Chimica",
+    topic: "Chimica inorganica"
   },
   {
     id: 5,
-    front: "Definizione di mole",
-    back: "La mole è l'unità di misura della quantità di sostanza. Una mole contiene esattamente $6,022 \\times 10^{23}$ entità elementari (numero di Avogadro).",
-    subject: "Chimica",
-    topic: "Stechiometria"
+    question: "Se A implica B e B implica C, cosa si può concludere?",
+    answer: "A implica C (proprietà transitiva dell'implicazione)",
+    subject: "Logica",
+    topic: "Logica proposizionale"
   }
-];
-
-// Available subjects and topics
-const subjectOptions = [
-  { value: "all", label: "Tutte le materie" },
-  { value: "Matematica", label: "Matematica" },
-  { value: "Fisica", label: "Fisica" },
-  { value: "Chimica", label: "Chimica" },
-  { value: "Logica", label: "Logica" }
 ];
 
 const FlashcardsPage = () => {
   const [location, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
   const [selectedSubject, setSelectedSubject] = useState<string>("all");
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
   const [knownCards, setKnownCards] = useState<number[]>([]);
   const [unknownCards, setUnknownCards] = useState<number[]>([]);
-  const [processedFlashcards, setProcessedFlashcards] = useState<Flashcard[]>([]);
   
-  // Fetch flashcards from the API (using mock data for now)
-  const { data: flashcards, isLoading } = useQuery<Flashcard[]>({
-    queryKey: ['/api/flashcards', { subject: selectedSubject }],
-    enabled: isAuthenticated,
-    initialData: mockFlashcards, // For demonstration
-  });
-  
-  // Filter flashcards by selected subject
-  const filteredFlashcards = flashcards?.filter(
-    card => selectedSubject === "all" || card.subject === selectedSubject
-  ) || [];
-  
-  // Process math expressions in flashcards
-  useEffect(() => {
-    if (filteredFlashcards.length) {
-      setProcessedFlashcards(
-        filteredFlashcards.map(card => ({
-          ...card,
-          front: renderMathInText(card.front),
-          back: renderMathInText(card.back)
-        }))
-      );
-    }
-  }, [filteredFlashcards]);
-  
-  // Redirect if not authenticated
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       setLocation("/?auth=login");
     }
   }, [isAuthenticated, setLocation]);
   
-  // Reset when subject changes
-  useEffect(() => {
-    setCurrentIndex(0);
-    setShowAnswer(false);
+  // Filtra le flashcards in base al soggetto selezionato
+  const filteredFlashcards = selectedSubject === "all" 
+    ? mockFlashcards 
+    : mockFlashcards.filter(card => card.subject === selectedSubject);
+  
+  const currentCard = filteredFlashcards[currentCardIndex];
+  const totalCards = filteredFlashcards.length;
+  
+  // Ottieni le flashcards reali dal server
+  const { data: flashcards = [], isLoading } = useQuery<any[]>({
+    queryKey: ['/api/flashcards', { subject: selectedSubject !== "all" ? selectedSubject : undefined }],
+    enabled: isAuthenticated,
+  });
+  
+  const handleNextCard = () => {
+    setIsFlipped(false);
+    if (currentCardIndex < totalCards - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+    } else {
+      // Torna alla prima carta se siamo alla fine
+      setCurrentCardIndex(0);
+    }
+  };
+  
+  const handlePrevCard = () => {
+    setIsFlipped(false);
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(currentCardIndex - 1);
+    } else {
+      // Vai all'ultima carta se siamo all'inizio
+      setCurrentCardIndex(totalCards - 1);
+    }
+  };
+  
+  const handleMarkKnown = () => {
+    const cardId = currentCard.id;
+    if (!knownCards.includes(cardId)) {
+      setKnownCards([...knownCards, cardId]);
+      setUnknownCards(unknownCards.filter(id => id !== cardId));
+    }
+    handleNextCard();
+  };
+  
+  const handleMarkUnknown = () => {
+    const cardId = currentCard.id;
+    if (!unknownCards.includes(cardId)) {
+      setUnknownCards([...unknownCards, cardId]);
+      setKnownCards(knownCards.filter(id => id !== cardId));
+    }
+    handleNextCard();
+  };
+  
+  const resetProgress = () => {
     setKnownCards([]);
     setUnknownCards([]);
-  }, [selectedSubject]);
-  
-  const currentCard = processedFlashcards[currentIndex];
-  
-  const handleFlip = () => {
-    setShowAnswer(!showAnswer);
-  };
-  
-  const handleKnown = () => {
-    if (currentCard) {
-      setKnownCards(prev => [...prev, currentCard.id]);
-      handleNext();
-    }
-  };
-  
-  const handleUnknown = () => {
-    if (currentCard) {
-      setUnknownCards(prev => [...prev, currentCard.id]);
-      handleNext();
-    }
-  };
-  
-  const handleNext = () => {
-    if (currentIndex < processedFlashcards.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setShowAnswer(false);
-    }
-  };
-  
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-      setShowAnswer(false);
-    }
-  };
-  
-  const handleReset = () => {
-    setCurrentIndex(0);
-    setShowAnswer(false);
-    setKnownCards([]);
-    setUnknownCards([]);
+    setCurrentCardIndex(0);
+    setIsFlipped(false);
   };
   
   if (!isAuthenticated) {
-    return null; // Redirect is handled in useEffect
+    return null; // La redirezione è gestita nell'useEffect
   }
   
-  const isCompleted = currentIndex >= processedFlashcards.length - 1 && 
-                      (knownCards.length + unknownCards.length) >= processedFlashcards.length;
+  // Ricrea il HTML con le formule matematiche renderizzate
+  const renderCardContent = (content: string) => {
+    return {__html: renderMathInText(content)};
+  };
   
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <h1 className="text-2xl font-heading font-bold mb-6">Flashcards</h1>
       
-      <div className="mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-        <div className="w-full sm:w-64">
-          <Select
-            value={selectedSubject}
-            onValueChange={setSelectedSubject}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona materia" />
-            </SelectTrigger>
-            <SelectContent>
-              {subjectOptions.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          <span className="text-sm text-muted-foreground">
-            {currentIndex + 1} di {processedFlashcards.length} flashcards
-          </span>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleReset}
-            disabled={processedFlashcards.length === 0}
-          >
-            <RotateCcw className="h-4 w-4 mr-1.5" /> Ricomincia
-          </Button>
-        </div>
-      </div>
-      
-      {isLoading ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-        </div>
-      ) : processedFlashcards.length > 0 ? (
-        <>
-          {!isCompleted ? (
-            <div className="max-w-3xl mx-auto">
-              <Card 
-                className="h-[320px] cursor-pointer relative overflow-hidden transition-all"
-                onClick={handleFlip}
-              >
-                {/* Ribbon with subject */}
-                {currentCard && (
-                  <div className="absolute top-0 right-0">
-                    <div className="bg-primary py-1 px-4 text-white text-sm">
-                      {currentCard.topic}
-                    </div>
-                  </div>
-                )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                <div>
+                  <CardTitle>Flashcards</CardTitle>
+                  <CardDescription>
+                    Ripassa concetti chiave con le flashcards
+                  </CardDescription>
+                </div>
                 
-                <div className="flex items-center justify-center h-full p-8">
-                  <div className="w-full">
-                    {currentCard && (
-                      showAnswer ? (
-                        <div className="flex flex-col items-center">
-                          <h3 className="text-lg font-medium text-primary mb-4">Risposta:</h3>
+                <div className="mt-3 sm:mt-0">
+                  <Select
+                    value={selectedSubject}
+                    onValueChange={setSelectedSubject}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Seleziona materia" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tutte le materie</SelectItem>
+                      {subjects.map(subject => (
+                        <SelectItem key={subject.id} value={subject.name}>
+                          {subject.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {filteredFlashcards.length > 0 ? (
+                <div className="flex flex-col items-center">
+                  <div 
+                    className={`relative w-full max-w-xl min-h-[350px] border rounded-lg cursor-pointer ${
+                      isFlipped ? 'bg-green-50 dark:bg-green-900/10' : 'bg-white dark:bg-gray-900'
+                    }`} 
+                    onClick={() => setIsFlipped(!isFlipped)}
+                  >
+                    <div className="absolute top-2 right-2">
+                      <Badge>
+                        {currentCardIndex + 1} / {totalCards}
+                      </Badge>
+                    </div>
+                    
+                    {/* Soggetto e argomento */}
+                    <div className="absolute top-2 left-2 flex flex-wrap gap-2">
+                      <Badge variant="outline" className="bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-800">
+                        {currentCard.subject}
+                      </Badge>
+                      <Badge variant="outline">
+                        {currentCard.topic}
+                      </Badge>
+                    </div>
+                    
+                    <div className="p-8 flex justify-center items-center h-full">
+                      {isFlipped ? (
+                        <div className="text-center">
+                          <Lightbulb className="w-8 h-8 mx-auto mb-4 text-amber-500" />
                           <div 
-                            className="text-lg text-center"
-                            dangerouslySetInnerHTML={{ __html: currentCard.back }}
+                            className="text-lg font-medium"
+                            dangerouslySetInnerHTML={renderCardContent(currentCard.answer)}
                           />
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center">
-                          <div 
-                            className="text-xl font-medium text-center"
-                            dangerouslySetInnerHTML={{ __html: currentCard.front }}
-                          />
-                          <p className="text-sm text-muted-foreground mt-4">
-                            (Clicca per vedere la risposta)
-                          </p>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-              </Card>
-              
-              <div className="flex justify-between mt-6">
-                <Button 
-                  variant="outline" 
-                  onClick={handlePrevious}
-                  disabled={currentIndex === 0}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1.5" /> Precedente
-                </Button>
-                
-                <div className="flex gap-2">
-                  {showAnswer && (
-                    <>
-                      <Button 
-                        variant="outline" 
-                        className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
-                        onClick={handleUnknown}
-                      >
-                        <XCircle className="h-4 w-4 mr-1.5" /> Non so
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="border-green-500 text-green-600 hover:bg-green-50 hover:text-green-700"
-                        onClick={handleKnown}
-                      >
-                        <CheckCircle className="h-4 w-4 mr-1.5" /> So
-                      </Button>
-                    </>
-                  )}
-                </div>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={handleNext}
-                  disabled={currentIndex >= processedFlashcards.length - 1}
-                >
-                  Successiva <ChevronRight className="h-4 w-4 ml-1.5" />
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <Card className="max-w-3xl mx-auto">
-              <CardHeader>
-                <CardTitle>Riepilogo</CardTitle>
-                <CardDescription>
-                  Hai completato tutte le flashcards per questa sezione
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col sm:flex-row justify-center items-center gap-8 py-6">
-                  <div className="text-center">
-                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-2">
-                      <CheckCircle className="h-8 w-8" />
+                        <div 
+                          className="text-xl font-heading text-center"
+                          dangerouslySetInnerHTML={renderCardContent(currentCard.question)}
+                        />
+                      )}
                     </div>
-                    <h3 className="text-2xl font-bold">{knownCards.length}</h3>
-                    <p className="text-muted-foreground">Conosciute</p>
+                    
+                    <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 text-sm text-muted-foreground">
+                      {isFlipped ? "Clicca per nascondere la risposta" : "Clicca per vedere la risposta"}
+                    </div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-2">
-                      <XCircle className="h-8 w-8" />
+                  <div className="flex justify-between w-full max-w-xl mt-4">
+                    <Button variant="outline" onClick={handlePrevCard}>
+                      ← Precedente
+                    </Button>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30"
+                        onClick={handleMarkUnknown}
+                      >
+                        <X className="w-4 h-4 mr-1" /> Non so
+                      </Button>
+                      
+                      <Button 
+                        variant="outline"
+                        className="border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/30"
+                        onClick={handleMarkKnown}
+                      >
+                        <Check className="w-4 h-4 mr-1" /> So
+                      </Button>
                     </div>
-                    <h3 className="text-2xl font-bold">{unknownCards.length}</h3>
-                    <p className="text-muted-foreground">Da rivedere</p>
+                    
+                    <Button variant="outline" onClick={handleNextCard}>
+                      Successiva →
+                    </Button>
                   </div>
                 </div>
-              </CardContent>
-              <CardFooter className="flex justify-center">
-                <Button onClick={handleReset}>
-                  <RotateCcw className="h-4 w-4 mr-1.5" /> Ricomincia
-                </Button>
-              </CardFooter>
-            </Card>
-          )}
-        </>
-      ) : (
-        <Card className="text-center py-12">
-          <div className="mx-auto mb-4 bg-primary-50 dark:bg-primary-900/20 rounded-full p-3 w-16 h-16 flex items-center justify-center">
-            <Layers className="h-8 w-8 text-primary" />
-          </div>
-          <CardTitle className="mb-2">Nessuna flashcard disponibile</CardTitle>
-          <CardDescription className="max-w-md mx-auto">
-            Non ci sono flashcard disponibili per questa materia. Prova a selezionare un'altra materia o torna più tardi.
-          </CardDescription>
-        </Card>
-      )}
+              ) : (
+                <div className="p-8 text-center text-muted-foreground">
+                  <BookMarked className="mx-auto h-12 w-12 text-muted-foreground/60 mb-3" />
+                  <p>Nessuna flashcard disponibile per la materia selezionata.</p>
+                  <p className="text-sm mt-1">Prova a selezionare un'altra materia.</p>
+                </div>
+              )}
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <div className="flex gap-2">
+                <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300 border-green-200 dark:border-green-800">
+                  {knownCards.length} Conosciute
+                </Badge>
+                <Badge variant="outline" className="bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300 border-red-200 dark:border-red-800">
+                  {unknownCards.length} Da rivedere
+                </Badge>
+              </div>
+              <Button variant="ghost" onClick={resetProgress}>
+                <RefreshCw className="w-4 h-4 mr-1.5" /> Reset
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+        
+        <div>
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>I tuoi progressi</CardTitle>
+              <CardDescription>
+                Le tue statistiche di apprendimento
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="bg-accent/50 p-4 rounded-md">
+                  <h3 className="text-sm font-medium mb-2">Flashcards completate oggi</h3>
+                  <div className="flex items-center justify-between">
+                    <div className="text-2xl font-bold">{knownCards.length + unknownCards.length}</div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                    <div className="text-sm text-muted-foreground">Obiettivo: 50</div>
+                  </div>
+                </div>
+                
+                <div className="bg-accent/30 p-4 rounded-md">
+                  <h3 className="text-sm font-medium mb-2">Carte da rivedere per materia</h3>
+                  <div className="space-y-2 mt-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Matematica</span>
+                      <Badge variant="outline" className="bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300">
+                        12
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Fisica</span>
+                      <Badge variant="outline" className="bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300">
+                        8
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Chimica</span>
+                      <Badge variant="outline" className="bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300">
+                        5
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border rounded-md p-4">
+                  <h3 className="text-sm font-medium mb-2">Consigli per un uso efficace</h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start">
+                      <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                      <span>Rivedi regolarmente le carte che non conosci</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                      <span>Fai sessioni brevi ma frequenti</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
+                      <span>Prova a spiegare i concetti ad alta voce</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };

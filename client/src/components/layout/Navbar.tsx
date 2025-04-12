@@ -54,50 +54,55 @@ const Navbar = () => {
             
             {/* Desktop navigation */}
             <div className="hidden sm:flex sm:space-x-6 sm:items-center sm:justify-center flex-1">
-              <Link href="/dashboard">
-                <a className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+              <Link 
+                href="/dashboard" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
                   activeSection === "dashboard" 
                     ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
                     : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}>
-                  <i className="ri-dashboard-line mr-1.5"></i> Dashboard
-                </a>
+                }`}
+              >
+                <i className="ri-dashboard-line mr-1.5"></i> Dashboard
               </Link>
-              <Link href="/practice">
-                <a className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+              <Link 
+                href="/practice" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
                   activeSection === "practice" 
                     ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
                     : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}>
-                  <i className="ri-edit-line mr-1.5"></i> Pratica
-                </a>
+                }`}
+              >
+                <i className="ri-edit-line mr-1.5"></i> Pratica
               </Link>
-              <Link href="/analytics">
-                <a className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+              <Link 
+                href="/analytics" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
                   activeSection === "analytics" 
                     ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
                     : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}>
-                  <i className="ri-bar-chart-line mr-1.5"></i> Statistiche
-                </a>
+                }`}
+              >
+                <i className="ri-bar-chart-line mr-1.5"></i> Statistiche
               </Link>
-              <Link href="/resources">
-                <a className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+              <Link 
+                href="/resources" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
                   activeSection === "resources" 
                     ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
                     : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}>
-                  <i className="ri-book-open-line mr-1.5"></i> Risorse
-                </a>
+                }`}
+              >
+                <i className="ri-book-open-line mr-1.5"></i> Risorse
               </Link>
-              <Link href="/community">
-                <a className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+              <Link 
+                href="/community" 
+                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
                   activeSection === "community" 
                     ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
                     : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}>
-                  <i className="ri-team-line mr-1.5"></i> Community
-                </a>
+                }`}
+              >
+                <i className="ri-team-line mr-1.5"></i> Community
               </Link>
             </div>
           </div>
@@ -220,59 +225,65 @@ const Navbar = () => {
                   )}
                   
                   <div className="flex flex-col space-y-2">
-                    <Link href="/dashboard">
-                      <a className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                    <Link 
+                      href="/dashboard"
+                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
                         activeSection === "dashboard" 
                           ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
                           : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}>
-                        <i className="ri-dashboard-line mr-2"></i> Dashboard
-                      </a>
+                      }`}
+                    >
+                      <i className="ri-dashboard-line mr-2"></i> Dashboard
                     </Link>
-                    <Link href="/practice">
-                      <a className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                    <Link 
+                      href="/practice"
+                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
                         activeSection === "practice" 
                           ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
                           : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}>
-                        <i className="ri-edit-line mr-2"></i> Pratica
-                      </a>
+                      }`}
+                    >
+                      <i className="ri-edit-line mr-2"></i> Pratica
                     </Link>
-                    <Link href="/analytics">
-                      <a className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                    <Link 
+                      href="/analytics"
+                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
                         activeSection === "analytics" 
                           ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
                           : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}>
-                        <i className="ri-bar-chart-line mr-2"></i> Statistiche
-                      </a>
+                      }`}
+                    >
+                      <i className="ri-bar-chart-line mr-2"></i> Statistiche
                     </Link>
-                    <Link href="/resources">
-                      <a className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                    <Link 
+                      href="/resources"
+                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
                         activeSection === "resources" 
                           ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
                           : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}>
-                        <i className="ri-book-open-line mr-2"></i> Risorse
-                      </a>
+                      }`}
+                    >
+                      <i className="ri-book-open-line mr-2"></i> Risorse
                     </Link>
-                    <Link href="/community">
-                      <a className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                    <Link 
+                      href="/community"
+                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
                         activeSection === "community" 
                           ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
                           : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}>
-                        <i className="ri-team-line mr-2"></i> Community
-                      </a>
+                      }`}
+                    >
+                      <i className="ri-team-line mr-2"></i> Community
                     </Link>
                   </div>
                   
                   {isAuthenticated && (
                     <div className="mt-auto border-t border-border pt-4">
-                      <Link href="/settings">
-                        <a className="flex items-center pl-3 pr-4 py-2 text-base text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800">
-                          <i className="ri-settings-4-line mr-2"></i> Impostazioni
-                        </a>
+                      <Link 
+                        href="/settings"
+                        className="flex items-center pl-3 pr-4 py-2 text-base text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      >
+                        <i className="ri-settings-4-line mr-2"></i> Impostazioni
                       </Link>
                       <button 
                         onClick={handleLogout}
