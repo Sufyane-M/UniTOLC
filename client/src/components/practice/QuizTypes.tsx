@@ -10,7 +10,7 @@ const QuizTypes = () => {
   
   const handleStartSimulation = () => {
     if (isAuthenticated) {
-      setLocation("/practice/simulation/new");
+      setLocation("/practice/simulation");
     } else {
       // Apre modale login se non autenticato
       setLocation("/?auth=login");

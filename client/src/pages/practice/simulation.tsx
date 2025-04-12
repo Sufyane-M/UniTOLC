@@ -5,21 +5,15 @@ import { useAuth } from "@/context/AuthContext";
 import { 
   Card, 
   CardContent, 
+  CardDescription, 
+  CardFooter, 
   CardHeader, 
-  CardTitle, 
-  CardDescription,
-  CardFooter 
+  CardTitle 
 } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Clock, AlertCircle } from "lucide-react";
+import { AlertCircle, Clock } from "lucide-react";
 import QuizContainer from "@/components/practice/QuizContainer";
 
 // Tipi di esame TOLC disponibili
@@ -27,31 +21,39 @@ const examTypes = [
   {
     id: "TOLC-I",
     name: "TOLC-I",
-    description: "Test per Ingegneria",
-    duration: 120, // minuti
+    description: "Ingegneria",
+    duration: 110,
     questions: 50,
-    subjects: ["Matematica", "Logica", "Scienze", "Comprensione verbale"]
+    subjects: ["Matematica", "Logica", "Scienze", "Comprensione verbale", "Inglese"]
   },
   {
     id: "TOLC-E",
     name: "TOLC-E",
-    description: "Test per Economia",
-    duration: 120,
-    questions: 45,
+    description: "Economia",
+    duration: 105,
+    questions: 36,
     subjects: ["Logica", "Comprensione verbale", "Matematica", "Inglese"]
   },
   {
     id: "TOLC-F",
     name: "TOLC-F",
-    description: "Test per Farmacia e CTF",
-    duration: 105,
+    description: "Farmacia e CTF",
+    duration: 115,
     questions: 50,
-    subjects: ["Biologia", "Chimica", "Matematica", "Fisica", "Logica"]
+    subjects: ["Biologia", "Chimica", "Fisica", "Matematica", "Logica", "Inglese"]
+  },
+  {
+    id: "TOLC-S",
+    name: "TOLC-S",
+    description: "Scienze",
+    duration: 125,
+    questions: 50,
+    subjects: ["Matematica di base", "Ragionamento e problemi", "Comprensione del testo", "Scienze di base", "Inglese"]
   },
   {
     id: "ENGLISH-TOLC",
     name: "ENGLISH-TOLC",
-    description: "Test in inglese",
+    description: "TOLC in inglese",
     duration: 120,
     questions: 50,
     subjects: ["Mathematics", "Logic", "Sciences", "Reading Comprehension"]
@@ -60,12 +62,12 @@ const examTypes = [
 
 const SimulationPage = () => {
   const [location, setLocation] = useLocation();
-  const { isAuthenticated, user } = useAuth();
-  const [selectedExamType, setSelectedExamType] = useState<string>("TOLC-I");
+  const { isAuthenticated } = useAuth();
+  const [selectedExamType, setSelectedExamType] = useState<string>(examTypes[0].id);
   const [simulationStarted, setSimulationStarted] = useState(false);
   const [currentSimulationId, setCurrentSimulationId] = useState<number | null>(null);
   
-  // Verifica se l'utente è autenticato, altrimenti reindirizza alla home
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       setLocation("/?auth=login");

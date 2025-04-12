@@ -5,68 +5,83 @@ import { useAuth } from "@/context/AuthContext";
 import { 
   Card, 
   CardContent, 
+  CardDescription, 
+  CardFooter, 
   CardHeader, 
-  CardTitle, 
-  CardDescription,
-  CardFooter
+  CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, RadioTower, BookMarked } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { BookMarked, Search, RadioTower } from "lucide-react";
 import QuizContainer from "@/components/practice/QuizContainer";
 
-// Dati di esempio per argomenti e materie
+// Mock delle materie e degli argomenti
 const subjects = [
-  { id: 1, name: "Matematica", topics: [
-    { id: 1, name: "Algebra", difficulty: "Medio" },
-    { id: 2, name: "Geometria", difficulty: "Facile" },
-    { id: 3, name: "Trigonometria", difficulty: "Difficile" },
-    { id: 4, name: "Analisi matematica", difficulty: "Difficile" },
-    { id: 5, name: "Calcolo integrale", difficulty: "Difficile" }
-  ]},
-  { id: 2, name: "Fisica", topics: [
-    { id: 6, name: "Meccanica", difficulty: "Medio" },
-    { id: 7, name: "Elettromagnetismo", difficulty: "Difficile" },
-    { id: 8, name: "Termodinamica", difficulty: "Difficile" }
-  ]},
-  { id: 3, name: "Logica", topics: [
-    { id: 9, name: "Logica proposizionale", difficulty: "Facile" },
-    { id: 10, name: "Insiemi", difficulty: "Facile" },
-    { id: 11, name: "Ragionamento logico", difficulty: "Medio" }
-  ]},
-  { id: 4, name: "Chimica", topics: [
-    { id: 12, name: "Chimica organica", difficulty: "Difficile" },
-    { id: 13, name: "Stechiometria", difficulty: "Medio" },
-    { id: 14, name: "Struttura atomica", difficulty: "Facile" }
-  ]}
+  {
+    id: 1,
+    name: "Matematica",
+    topics: [
+      { id: 1, name: "Algebra", difficulty: "media" },
+      { id: 2, name: "Geometria", difficulty: "difficile" },
+      { id: 3, name: "Trigonometria", difficulty: "difficile" },
+      { id: 4, name: "Calcolo integrale", difficulty: "difficile" },
+      { id: 5, name: "Calcolo differenziale", difficulty: "difficile" },
+      { id: 6, name: "Probabilità", difficulty: "media" },
+      { id: 7, name: "Statistica", difficulty: "facile" }
+    ]
+  },
+  {
+    id: 2,
+    name: "Fisica",
+    topics: [
+      { id: 8, name: "Meccanica", difficulty: "media" },
+      { id: 9, name: "Elettromagnetismo", difficulty: "difficile" },
+      { id: 10, name: "Termodinamica", difficulty: "media" },
+      { id: 11, name: "Ottica", difficulty: "facile" }
+    ]
+  },
+  {
+    id: 3,
+    name: "Chimica",
+    topics: [
+      { id: 12, name: "Chimica organica", difficulty: "difficile" },
+      { id: 13, name: "Chimica inorganica", difficulty: "media" },
+      { id: 14, name: "Stechiometria", difficulty: "facile" },
+      { id: 15, name: "Termochimica", difficulty: "media" }
+    ]
+  },
+  {
+    id: 4,
+    name: "Logica",
+    topics: [
+      { id: 16, name: "Logica proposizionale", difficulty: "facile" },
+      { id: 17, name: "Logica dei predicati", difficulty: "media" },
+      { id: 18, name: "Ragionamento critico", difficulty: "media" },
+      { id: 19, name: "Problem solving", difficulty: "difficile" }
+    ]
+  }
 ];
 
-// Mappa difficoltà al colore della badge
+// Colori per le diverse difficoltà
 const difficultyColors: Record<string, string> = {
-  "Facile": "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-  "Medio": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-  "Difficile": "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+  "facile": "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  "media": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  "difficile": "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
 };
 
 const TopicQuizPage = () => {
   const [location, setLocation] = useLocation();
-  const { isAuthenticated, user } = useAuth();
-  const [selectedSubject, setSelectedSubject] = useState<number | null>(null);
-  const [selectedTopics, setSelectedTopics] = useState<number[]>([]);
+  const { isAuthenticated } = useAuth();
+  const [selectedSubject, setSelectedSubject] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTopics, setSelectedTopics] = useState<number[]>([]);
   const [quizStarted, setQuizStarted] = useState(false);
   const [topicQuizId, setTopicQuizId] = useState<number | null>(null);
   
-  // Verifica se l'utente è autenticato
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       setLocation("/?auth=login");

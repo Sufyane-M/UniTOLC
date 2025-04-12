@@ -53,7 +53,7 @@ const Navbar = () => {
             </div>
             
             {/* Desktop navigation */}
-            <div className="hidden mx-auto sm:ml-6 sm:flex sm:space-x-6 sm:justify-center">
+            <div className="hidden sm:flex sm:space-x-6 sm:items-center sm:justify-center flex-1">
               <Link href="/dashboard">
                 <a className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
                   activeSection === "dashboard" 
@@ -125,7 +125,7 @@ const Navbar = () => {
                   <Button
                     variant="default"
                     size="sm"
-                    className="hidden sm:flex ml-3 bg-amber-500 hover:bg-amber-600 text-white"
+                    className="hidden sm:flex ml-3 bg-amber-500 hover:bg-amber-600 text-white dark:text-white"
                     onClick={() => setLocation("/settings")}
                   >
                     <i className="ri-vip-crown-line mr-1"></i>
@@ -181,7 +181,7 @@ const Navbar = () => {
                 <Button
                   variant="default"
                   onClick={openRegisterModal}
-                  className="bg-primary hover:bg-primary-600"
+                  className="bg-primary hover:bg-primary-600 text-white dark:text-white"
                 >
                   Registrati
                 </Button>
@@ -210,10 +210,10 @@ const Navbar = () => {
                     </div>
                   ) : (
                     <div className="flex flex-col space-y-2 mb-6 pb-4 border-b border-border">
-                      <Button onClick={openLoginModal} variant="outline" className="w-full">
+                      <Button onClick={openLoginModal} variant="outline" className="w-full text-foreground dark:text-foreground">
                         Accedi
                       </Button>
-                      <Button onClick={openRegisterModal} variant="default" className="w-full">
+                      <Button onClick={openRegisterModal} variant="default" className="w-full text-white dark:text-white">
                         Registrati
                       </Button>
                     </div>
