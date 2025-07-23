@@ -27,7 +27,9 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "VITE_SUPABASE_URL": "https://nzhxmlqjthcwyfbixytw.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56aHhtbHFqdGhjd3lmYml4eXR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0NzMwOTksImV4cCI6MjA2MzA0OTA5OX0.PwJ-2cxRcomG85Sn49smMLngn2al-5zAiPR5ZGny4I0"
   },
   "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npm run build",
