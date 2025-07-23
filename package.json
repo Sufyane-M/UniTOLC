@@ -126,6 +126,7 @@
     "supabase": "^1.131.5",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^3.4.14",
+    "terser": "^5.36.0",
     "tsx": "^4.19.1",
     "typescript": "5.6.3",
     "vite": "^5.4.14",
