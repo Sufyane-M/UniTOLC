@@ -22,7 +22,6 @@ export const users = pgTable("users", {
   fullName: text("full_name"),
   role: userRoleEnum("role").default("user").notNull(),
   isPremium: boolean("is_premium").default(false).notNull(),
-  studyStreak: integer("study_streak").default(0),
   xpPoints: integer("xp_points").default(0),
   lastActive: timestamp("last_active").defaultNow(),
   profileImage: text("profile_image"),
@@ -72,17 +71,45 @@ export const topics = pgTable("topics", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Tabella questions
-export const questions = pgTable("questions", {
+// Tabella tolc_exam_types
+export const tolcExamTypes = pgTable("tolc_exam_types", {
   id: serial("id").primaryKey(),
-  topicId: integer("topic_id").notNull().references(() => topics.id, { onDelete: 'cascade' }),
+  code: text("code").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  totalDuration: integer("total_duration").notNull(),
+  totalSections: integer("total_sections").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+// Tabella tolc_exam_sections
+export const tolcExamSections = pgTable("tolc_exam_sections", {
+  id: serial("id").primaryKey(),
+  examTypeId: integer("exam_type_id").notNull().references(() => tolcExamTypes.id, { onDelete: 'cascade' }),
+  code: text("code").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  timeLimit: integer("time_limit").notNull(),
+  questionCount: integer("question_count").notNull(),
+  sortOrder: integer("sort_order").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+// Tabella questions_unified (unifies questions and tolc_questions)
+export const questions = pgTable("questions_unified", {
+  id: serial("id").primaryKey(),
+  topicId: integer("topic_id").references(() => topics.id, { onDelete: 'cascade' }),
+  sectionId: integer("section_id").references(() => tolcExamSections.id, { onDelete: 'cascade' }),
   text: text("text").notNull(),
-  options: jsonb("options").notNull(), // array di opzioni
+  options: jsonb("options").notNull(),
   correctAnswer: text("correct_answer").notNull(),
   explanation: text("explanation"),
-  difficulty: difficultyEnum("difficulty").default("media").notNull(),
-  isPremium: boolean("is_premium").default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  difficulty: text("difficulty"),
+  isPremium: boolean("is_premium").default(false).notNull(),
+  active: boolean("active").default(true).notNull(),
+  imageUrl: text("image_url"),
+  imageAltText: text("image_alt_text"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 // Tabella quizzes
@@ -134,36 +161,7 @@ export const weakAreas = pgTable("weak_areas", {
   lastUpdated: timestamp("last_updated").defaultNow().notNull(),
 });
 
-// Tabella study_recommendations
-export const studyRecommendations = pgTable("study_recommendations", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  topicId: integer("topic_id").notNull().references(() => topics.id, { onDelete: 'cascade' }),
-  priority: text("priority").notNull(), // alta, media, bassa
-  reason: text("reason"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
 
-// Tabella daily_challenges
-export const dailyChallenges = pgTable("daily_challenges", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  type: text("type").notNull(), // quiz, flashcard, studio, etc
-  targetId: integer("target_id"), // ID del quiz o altra risorsa
-  xpReward: integer("xp_reward").notNull(),
-  date: date("date").notNull(),
-  difficulty: difficultyEnum("difficulty").default("media").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-
-// Tabella user_challenge_completions
-export const userChallengeCompletions = pgTable("user_challenge_completions", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  challengeId: integer("challenge_id").notNull().references(() => dailyChallenges.id, { onDelete: 'cascade' }),
-  completedAt: timestamp("completed_at").defaultNow().notNull(),
-});
 
 // Tabella learning_resources
 export const learningResources = pgTable("learning_resources", {
@@ -179,15 +177,11 @@ export const learningResources = pgTable("learning_resources", {
 });
 
 // Schema di validazione per inserimento utente
-export const insertUserSchema = createInsertSchema(users).pick({
-  email: true,
-  username: true,
-  password: true,
-  fullName: true,
-}).extend({
-  password: z.string().min(8, "La password deve avere almeno 8 caratteri"),
+export const insertUserSchema = z.object({
   email: z.string().email("Inserisci un'email valida"),
   username: z.string().min(3, "Lo username deve avere almeno 3 caratteri"),
+  password: z.string().min(8, "La password deve avere almeno 8 caratteri"),
+  fullName: z.string().min(1, "Il nome completo è richiesto"),
 });
 
 // Schema di validazione per login
@@ -197,22 +191,21 @@ export const loginUserSchema = z.object({
 });
 
 // Schema di validazione per registrazione esame
-export const insertUserExamSchema = createInsertSchema(userExams).pick({
-  examType: true,
-  university: true,
-  examDate: true,
-  targetScore: true,
+export const insertUserExamSchema = z.object({
+  examType: z.enum(["tolc-i", "tolc-e", "tolc-f", "tolc-s", "tolc-su", "tolc-av", "tolc-b", "tolc-cla", "tolc-dsu", "tolc-ps"]),
+  university: z.string().optional(),
+  examDate: z.string().optional(),
+  targetScore: z.number().optional(),
 });
 
 // Schema di validazione per creazione quiz
-export const insertQuizSchema = createInsertSchema(quizzes).pick({
-  title: true,
-  description: true,
-  type: true,
-  subjectId: true,
-  timeLimit: true,
-  isPremium: true,
-}).extend({
+export const insertQuizSchema = z.object({
+  title: z.string().min(1, "Il titolo è richiesto"),
+  description: z.string().optional(),
+  type: z.enum(["practice", "mock", "custom"]),
+  subjectId: z.number().optional(),
+  timeLimit: z.number().optional(),
+  isPremium: z.boolean().optional(),
   questions: z.array(z.number()),
 });
 
@@ -233,7 +226,5 @@ export type InsertQuiz = z.infer<typeof insertQuizSchema>;
 export type UserQuizAttempt = typeof userQuizAttempts.$inferSelect;
 export type StudySession = typeof studySessions.$inferSelect;
 export type WeakArea = typeof weakAreas.$inferSelect;
-export type StudyRecommendation = typeof studyRecommendations.$inferSelect;
-export type DailyChallenge = typeof dailyChallenges.$inferSelect;
-export type UserChallengeCompletion = typeof userChallengeCompletions.$inferSelect;
+
 export type LearningResource = typeof learningResources.$inferSelect;

@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AuthModal from "@/components/auth/AuthModal";
 import { useAuth } from "@/context/AuthContext";
-import { Check, Crown, BookOpen, BarChart2, Brain, Timer, Users } from "lucide-react";
+import { Check, Crown, BookOpen, BarChart2, Brain, Timer } from "lucide-react";
+import { motion } from "framer-motion";
+import Pricing from "@/components/pricing/Pricing";
 
 const Home = () => {
   const { isAuthenticated } = useAuth();
@@ -12,8 +14,14 @@ const Home = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<"login" | "register">("login");
   
-  // Controlla se ci sono parametri nell'URL per aprire il modale di autenticazione
+  // Reindirizza gli utenti autenticati alla dashboard
   useEffect(() => {
+    if (isAuthenticated) {
+      setLocation("/dashboard");
+      return;
+    }
+    
+    // Controlla se ci sono parametri nell'URL per aprire il modale di autenticazione
     const params = new URLSearchParams(location.split("?")[1]);
     if (params.get("auth") === "login") {
       setAuthModalMode("login");
@@ -22,7 +30,7 @@ const Home = () => {
       setAuthModalMode("register");
       setIsAuthModalOpen(true);
     }
-  }, [location]);
+  }, [location, isAuthenticated, setLocation]);
   
   const openRegisterModal = () => {
     setAuthModalMode("register");
@@ -134,15 +142,7 @@ const Home = () => {
               </p>
             </div>
             
-            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-              <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-heading font-semibold mb-3">Community di studenti</h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Connettiti con altri studenti, condividi consigli e affronta insieme le sfide.
-              </p>
-            </div>
+
             
             <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
               <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-full w-12 h-12 flex items-center justify-center mb-4">
@@ -223,98 +223,7 @@ const Home = () => {
       </section>
       
       {/* Pricing Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-heading font-bold mb-4">Piani e prezzi</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Scegli il piano più adatto alle tue esigenze di preparazione.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="border-2 border-muted">
-              <CardContent className="p-6">
-                <h3 className="text-2xl font-heading font-bold mb-2">Base</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Perfetto per iniziare la tua preparazione.
-                </p>
-                <p className="text-3xl font-bold mb-6">Gratuito</p>
-                
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Accesso limitato ai quiz di pratica</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Dashboard di progresso base</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>3 simulazioni TOLC complete al mese</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Accesso alla community</span>
-                  </li>
-                </ul>
-                
-                <Button 
-                  className="w-full" 
-                  variant="outline"
-                  onClick={isAuthenticated ? () => setLocation("/dashboard") : openRegisterModal}
-                >
-                  {isAuthenticated ? "Accedi al tuo account" : "Registrati gratis"}
-                </Button>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-2 border-primary relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-primary text-white px-3 py-1 text-sm font-medium">
-                Consigliato
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-2xl font-heading font-bold mb-2">Premium</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  La preparazione completa per il massimo risultato.
-                </p>
-                <p className="text-3xl font-bold mb-6">€5 <span className="text-lg font-normal text-gray-500">/mese</span></p>
-                
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Accesso illimitato a tutti i quiz e simulazioni</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Spiegazioni dettagliate per ogni domanda</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Analytics avanzate e percorsi personalizzati</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Materiali teorici esclusivi</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Priorità nella community e supporto dedicato</span>
-                  </li>
-                </ul>
-                
-                <Button 
-                  className="w-full"
-                  onClick={isAuthenticated ? () => setLocation("/settings?tab=premium") : openRegisterModal}
-                >
-                  {isAuthenticated ? "Passa a Premium" : "Inizia gratis, poi passa a Premium"}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
+      <Pricing />
       
       {/* FAQ Section */}
       <section className="py-16 bg-gray-50 dark:bg-gray-800">
@@ -366,31 +275,7 @@ const Home = () => {
         </div>
       </section>
       
-      {/* CTA Section */}
-      <section className="py-16 bg-primary-500 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-heading font-bold mb-4">Pronto a iniziare la tua preparazione?</h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-3xl mx-auto">
-            Unisciti a migliaia di studenti che hanno superato gli esami TOLC con TolcPrep.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {isAuthenticated ? (
-              <Button size="lg" className="bg-white text-primary-600 hover:bg-primary-50" onClick={() => setLocation("/dashboard")}>
-                Vai alla tua dashboard
-              </Button>
-            ) : (
-              <>
-                <Button size="lg" className="bg-white text-primary-600 hover:bg-primary-50" onClick={openRegisterModal}>
-                  Inizia gratuitamente
-                </Button>
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-primary-600" onClick={openLoginModal}>
-                  Scopri di più
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+
       
       <AuthModal 
         isOpen={isAuthModalOpen} 

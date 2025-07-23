@@ -434,7 +434,7 @@ const Settings = () => {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <p className="font-medium">Risposte alla community</p>
+        
                         <p className="text-sm text-muted-foreground">
                           Ricevi notifiche quando qualcuno risponde ai tuoi post.
                         </p>
@@ -538,7 +538,7 @@ const Settings = () => {
                               <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
-                              <span className="text-sm">Accesso alla community</span>
+              
                             </li>
                           </ul>
                           <p className="text-sm text-muted-foreground">Il tuo piano attuale</p>
@@ -628,7 +628,7 @@ const Settings = () => {
                       <div className="space-y-0.5">
                         <p className="font-medium">Profilo pubblico</p>
                         <p className="text-sm text-muted-foreground">
-                          Permetti agli altri utenti di vedere il tuo profilo nella community.
+            
                         </p>
                       </div>
                       <Switch defaultChecked />

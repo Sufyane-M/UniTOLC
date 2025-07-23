@@ -1,16 +1,12 @@
-import { 
+import {
   users, userExams, subscriptions, subjects, topics, questions, quizzes, 
-  userQuizAttempts, studySessions, weakAreas, studyRecommendations, 
-  dailyChallenges, userChallengeCompletions, learningResources,
+  userQuizAttempts, studySessions, weakAreas, learningResources,
   type User, type InsertUser, type UserExam, type InsertUserExam,
   type Quiz, type InsertQuiz, type Question, type UserQuizAttempt,
   type Subject, type Topic, type StudySession, type WeakArea,
-  type StudyRecommendation, type DailyChallenge, type UserChallengeCompletion,
   type LearningResource
 } from "@shared/schema";
-import { db } from "./db";
-import { eq, and, gte, lte, desc, sql, inArray, isNull, not, like } from "drizzle-orm";
-import { hash, compare } from "bcrypt";
+import { supabase } from "./db";
 
 export interface IStorage {
   // Utenti
@@ -19,6 +15,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, userData: Partial<User>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<boolean>;
   loginUser(email: string, password: string): Promise<User | undefined>;
   
   // Esami
@@ -38,12 +35,6 @@ export interface IStorage {
   
   // Statistiche e raccomandazioni
   getWeakAreas(userId: number): Promise<WeakArea[]>;
-  getStudyRecommendations(userId: number): Promise<StudyRecommendation[]>;
-  
-  // Sfide giornaliere
-  getDailyChallenges(date: Date): Promise<DailyChallenge[]>;
-  completeChallenge(userId: number, challengeId: number): Promise<UserChallengeCompletion>;
-  getUserCompletedChallenges(userId: number, date: Date): Promise<UserChallengeCompletion[]>;
   
   // Risorse di apprendimento
   getLearningResources(topicId?: number): Promise<LearningResource[]>;
@@ -56,137 +47,421 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // Utenti
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    const { data, error } = await supabase
+      .from('users')
+      .select()
+      .eq('id', id)
+      .single();
+      
+    if (error || !data) return undefined;
+    
+    // Map database fields to TypeScript interface
+    return {
+      id: data.id,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+      fullName: data.full_name,
+      role: data.role,
+      isPremium: data.is_premium,
+      xpPoints: data.xp_points,
+      lastActive: data.last_active ? new Date(data.last_active) : null,
+      profileImage: data.profile_image,
+      onboardingCompleted: data.onboarding_completed,
+      preferences: data.preferences,
+      createdAt: new Date(data.created_at)
+    } as User;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user;
+    const { data, error } = await supabase
+      .from('users')
+      .select()
+      .eq('username', username)
+      .single();
+      
+    if (error || !data) return undefined;
+    
+    // Map database fields to TypeScript interface
+    return {
+      id: data.id,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+      fullName: data.full_name,
+      role: data.role,
+      isPremium: data.is_premium,
+      xpPoints: data.xp_points,
+      lastActive: data.last_active ? new Date(data.last_active) : null,
+      profileImage: data.profile_image,
+      onboardingCompleted: data.onboarding_completed,
+      preferences: data.preferences,
+      createdAt: new Date(data.created_at)
+    } as User;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
+    const { data, error } = await supabase
+      .from('users')
+      .select()
+      .eq('email', email)
+      .single();
+      
+    if (error || !data) return undefined;
+    
+    // Map database fields to TypeScript interface
+    return {
+      id: data.id,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+      fullName: data.full_name,
+      role: data.role,
+      isPremium: data.is_premium,
+      xpPoints: data.xp_points,
+      lastActive: data.last_active ? new Date(data.last_active) : null,
+      profileImage: data.profile_image,
+      onboardingCompleted: data.onboarding_completed,
+      preferences: data.preferences,
+      createdAt: new Date(data.created_at)
+    } as User;
   }
 
   async createUser(userData: InsertUser): Promise<User> {
-    const hashedPassword = await hash(userData.password, 10);
-    // Initialize all user statistics to zero/default values
-    const [user] = await db
-      .insert(users)
-      .values({
-        ...userData,
-        password: hashedPassword,
-        isPremium: false,
+    // Authentication is now handled by Supabase Auth
+    // This is only for creating a user record linked to an auth account
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        email: userData.email,
+        username: userData.username,
+        password: userData.password,
+        full_name: userData.fullName,
         role: "user",
-        studyStreak: 0,
-        xpPoints: 0,
-        lastActive: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        is_premium: false,
+        xp_points: 0,
+        last_active: new Date().toISOString(),
+        created_at: new Date().toISOString()
       })
-      .returning();
-    return user;
+      .select()
+      .single();
+      
+    if (error) throw new Error(error.message);
+    
+    // Map database response to TypeScript interface
+    return {
+      id: data.id,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+      fullName: data.full_name,
+      role: data.role,
+      isPremium: data.is_premium,
+      xpPoints: data.xp_points,
+      lastActive: data.last_active ? new Date(data.last_active) : null,
+      profileImage: data.profile_image,
+      onboardingCompleted: data.onboarding_completed,
+      preferences: data.preferences,
+      createdAt: new Date(data.created_at)
+    } as User;
   }
 
   async updateUser(id: number, userData: Partial<User>): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set(userData)
-      .where(eq(users.id, id))
-      .returning();
+    // Map camelCase fields to snake_case for database
+    const dbData: any = {};
+    
+    if (userData.fullName !== undefined) dbData.full_name = userData.fullName;
+    if (userData.isPremium !== undefined) dbData.is_premium = userData.isPremium;
+    if (userData.xpPoints !== undefined) dbData.xp_points = userData.xpPoints;
+    if (userData.lastActive !== undefined) dbData.last_active = userData.lastActive;
+    if (userData.profileImage !== undefined) dbData.profile_image = userData.profileImage;
+    if (userData.onboardingCompleted !== undefined) dbData.onboarding_completed = userData.onboardingCompleted;
+    if (userData.preferences !== undefined) dbData.preferences = userData.preferences;
+    if (userData.email !== undefined) dbData.email = userData.email;
+    if (userData.username !== undefined) dbData.username = userData.username;
+    if (userData.role !== undefined) dbData.role = userData.role;
+    
+    const { data, error } = await supabase
+      .from('users')
+      .update(dbData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) return undefined;
+    
+    // Map database response back to TypeScript interface
+    const mappedUser = {
+      id: data.id,
+      email: data.email,
+      username: data.username,
+      password: data.password,
+      fullName: data.full_name,
+      role: data.role,
+      isPremium: data.is_premium,
+      xpPoints: data.xp_points,
+      lastActive: data.last_active ? new Date(data.last_active) : null,
+      profileImage: data.profile_image,
+      onboardingCompleted: data.onboarding_completed,
+      preferences: data.preferences,
+      createdAt: new Date(data.created_at)
+    };
     
     // Send real-time update to the user if connected via WebSocket
-    if (user && (global as any).sendUserUpdate) {
-      // Get updated user without password
-      const { password, ...userWithoutPassword } = user;
-      
+    if ((global as any).sendUserUpdate) {
       // Send user update via WebSocket
       (global as any).sendUserUpdate(id, {
         type: 'user_stats',
-        user: userWithoutPassword
+        user: mappedUser
       });
     }
     
-    return user;
+    return mappedUser as User;
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      // Prima ottieni l'auth_user_id dalla mappatura (se esiste)
+      const { data: mappingData, error: mappingError } = await supabase
+        .from('auth_user_mapping')
+        .select('auth_user_id')
+        .eq('user_id', id)
+        .maybeSingle(); // Usa maybeSingle invece di single per gestire il caso di nessun risultato
+      
+      // Se esiste una mappatura, elimina l'utente da Supabase Auth
+      if (mappingData && mappingData.auth_user_id) {
+        const { error: authError } = await supabase.auth.admin.deleteUser(
+          mappingData.auth_user_id
+        );
+        
+        if (authError) {
+          console.error('Error deleting user from auth:', authError);
+          throw new Error(`Errore eliminazione da Auth: ${authError.message}`);
+        }
+      } else {
+        console.log(`User ${id} has no auth mapping, skipping Supabase Auth deletion`);
+      }
+      
+      // Elimina tutti i dati correlati all'utente dal database
+      // Elimina i tentativi di quiz
+      const { error: quizError } = await supabase
+        .from('user_quiz_attempts')
+        .delete()
+        .eq('user_id', id);
+      
+      if (quizError) {
+        console.error('Error deleting quiz attempts:', quizError);
+        throw new Error(`Errore eliminazione tentativi quiz: ${quizError.message}`);
+      }
+      
+      // Elimina le sessioni di studio
+      const { error: studyError } = await supabase
+        .from('study_sessions')
+        .delete()
+        .eq('user_id', id);
+      
+      if (studyError) {
+        console.error('Error deleting study sessions:', studyError);
+        throw new Error(`Errore eliminazione sessioni studio: ${studyError.message}`);
+      }
+      
+      // Elimina le aree deboli
+      const { error: weakError } = await supabase
+        .from('weak_areas')
+        .delete()
+        .eq('user_id', id);
+      
+      if (weakError) {
+        console.error('Error deleting weak areas:', weakError);
+        throw new Error(`Errore eliminazione aree deboli: ${weakError.message}`);
+      }
+      
+      // Elimina gli esami utente
+      const { error: examError } = await supabase
+        .from('user_exams')
+        .delete()
+        .eq('user_id', id);
+      
+      if (examError) {
+        console.error('Error deleting user exams:', examError);
+        throw new Error(`Errore eliminazione esami utente: ${examError.message}`);
+      }
+      
+      // Elimina le sottoscrizioni
+      const { error: subError } = await supabase
+        .from('subscriptions')
+        .delete()
+        .eq('user_id', id);
+      
+      if (subError) {
+        console.error('Error deleting subscriptions:', subError);
+        throw new Error(`Errore eliminazione sottoscrizioni: ${subError.message}`);
+      }
+      
+      // Elimina i ticket di supporto
+      const { error: ticketError } = await supabase
+        .from('support_tickets')
+        .delete()
+        .eq('user_id', id);
+      
+      if (ticketError) {
+        console.error('Error deleting support tickets:', ticketError);
+        throw new Error(`Errore eliminazione ticket supporto: ${ticketError.message}`);
+      }
+      
+      // Elimina la mappatura auth (se esiste)
+      if (mappingData && mappingData.auth_user_id) {
+        const { error: mappingDeleteError } = await supabase
+          .from('auth_user_mapping')
+          .delete()
+          .eq('user_id', id);
+        
+        if (mappingDeleteError) {
+          console.error('Error deleting auth mapping:', mappingDeleteError);
+          throw new Error(`Errore eliminazione mappatura: ${mappingDeleteError.message}`);
+        }
+      } else {
+        console.log(`User ${id} has no auth mapping to delete`);
+      }
+      
+      // Infine elimina l'utente dal database locale
+      const { error: userError } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', id);
+      
+      if (userError) {
+        console.error('Error deleting user:', userError);
+        throw new Error(`Errore eliminazione utente: ${userError.message}`);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error; // Rilancia l'errore invece di restituire false
+    }
   }
 
   async loginUser(email: string, password: string): Promise<User | undefined> {
-    const user = await this.getUserByEmail(email);
-    if (!user) return undefined;
+    // This is now handled by Supabase Auth
+    // For backwards compatibility during migration, we'll keep this method
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
     
-    const isValid = await compare(password, user.password);
-    if (!isValid) return undefined;
+    if (authError || !authData.user) return undefined;
     
-    return user;
+    // Get the user record from our users table
+    const { data, error } = await supabase
+      .from('auth_user_mapping')
+      .select('user_id')
+      .eq('auth_user_id', authData.user.id)
+      .single();
+      
+    if (error || !data) return undefined;
+    
+    return await this.getUser(data.user_id);
   }
   
   // Esami
   async getUserExam(userId: number): Promise<UserExam | undefined> {
-    const [exam] = await db
+    const { data, error } = await supabase
+      .from('user_exams')
       .select()
-      .from(userExams)
-      .where(eq(userExams.userId, userId))
-      .orderBy(desc(userExams.createdAt))
-      .limit(1);
-    return exam;
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+      
+    if (error || !data) return undefined;
+    return data as UserExam;
   }
 
   async createUserExam(userId: number, examData: InsertUserExam): Promise<UserExam> {
-    const [exam] = await db
-      .insert(userExams)
-      .values({
+    const { data, error } = await supabase
+      .from('user_exams')
+      .insert({
         ...examData,
-        userId
+        user_id: userId
       })
-      .returning();
-    return exam;
+      .select()
+      .single();
+    
+    if (error) throw new Error(error.message);
+    return data as UserExam;
   }
 
   async updateUserExam(id: number, examData: Partial<UserExam>): Promise<UserExam | undefined> {
-    const [exam] = await db
-      .update(userExams)
-      .set(examData)
-      .where(eq(userExams.id, id))
-      .returning();
-    return exam;
+    const { data, error } = await supabase
+      .from('user_exams')
+      .update(examData)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) return undefined;
+    return data as UserExam;
   }
   
   // Quiz e domande
   async getQuizzes(type?: string, subjectId?: number): Promise<Quiz[]> {
-    let query = db.select().from(quizzes);
+    let query = supabase.from('quizzes').select();
     
     if (type) {
-      query = query.where(eq(quizzes.type, type));
+      query = query.eq('type', type);
     }
     
     if (subjectId) {
-      query = query.where(eq(quizzes.subjectId, subjectId));
+      query = query.eq('subject_id', subjectId);
     }
     
-    return await query;
+    const { data, error } = await query;
+    
+    if (error) throw new Error(error.message);
+    return data as Quiz[];
   }
 
   async getQuiz(id: number): Promise<Quiz | undefined> {
-    const [quiz] = await db.select().from(quizzes).where(eq(quizzes.id, id));
-    return quiz;
+    const { data, error } = await supabase
+      .from('quizzes')
+      .select()
+      .eq('id', id)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as Quiz;
   }
 
   async getQuestionsByTopic(topicId: number): Promise<Question[]> {
-    return await db.select().from(questions).where(eq(questions.topicId, topicId));
+    const { data, error } = await supabase
+      .from('questions')
+      .select()
+      .eq('topic_id', topicId);
+    
+    if (error) throw new Error(error.message);
+    return data as Question[];
   }
 
   async getQuestionsByDifficulty(difficulty: string): Promise<Question[]> {
-    return await db.select().from(questions).where(eq(questions.difficulty, difficulty));
+    const { data, error } = await supabase
+      .from('questions')
+      .select()
+      .eq('difficulty', difficulty);
+    
+    if (error) throw new Error(error.message);
+    return data as Question[];
   }
   
   // Tentativi quiz
   async saveQuizAttempt(attempt: Partial<UserQuizAttempt>): Promise<UserQuizAttempt> {
-    const [newAttempt] = await db
-      .insert(userQuizAttempts)
-      .values(attempt as any)
-      .returning();
+    const { data, error } = await supabase
+      .from('user_quiz_attempts')
+      .insert(attempt as any)
+      .select()
+      .single();
+    
+    if (error) throw new Error(error.message);
     
     // Update user statistics in real-time after completing a quiz attempt
     if (attempt.userId && attempt.completed) {
@@ -199,46 +474,38 @@ export class DatabaseStorage implements IStorage {
         // Update user XP, lastActive and other relevant stats
         await this.updateUser(user.id, {
           xpPoints: (user.xpPoints || 0) + xpGained,
-          lastActive: new Date().toISOString(),
-          // Increment studyStreak if it's a new day since last activity
-          studyStreak: this.shouldIncrementStreak(user.lastActive) 
-            ? (user.studyStreak || 0) + 1 
-            : user.studyStreak
+          lastActive: new Date()
         });
         
         // If accuracy is below threshold, add to weak areas
         if (attempt.score && attempt.score < 70 && attempt.quizId) {
           const quiz = await this.getQuiz(attempt.quizId);
-          if (quiz && quiz.topicId) {
+          if (quiz && quiz.subjectId) {
             // Check if weak area already exists
-            const existingWeakAreas = await db
+            const { data: existingWeakAreas, error: existingWeakAreasError } = await supabase
+              .from('weak_areas')
               .select()
-              .from(weakAreas)
-              .where(
-                and(
-                  eq(weakAreas.userId, attempt.userId),
-                  eq(weakAreas.topicId, quiz.topicId)
-                )
-              );
+              .eq('user_id', attempt.userId)
+              .eq('topic_id', quiz.subjectId);
             
-            if (existingWeakAreas.length > 0) {
+            if (!existingWeakAreasError && existingWeakAreas && existingWeakAreas.length > 0) {
               // Update existing weak area
-              await db
-                .update(weakAreas)
-                .set({
+              await supabase
+                .from('weak_areas')
+                .update({
                   accuracy: attempt.score,
-                  lastUpdated: new Date().toISOString()
+                  last_updated: new Date().toISOString()
                 })
-                .where(eq(weakAreas.id, existingWeakAreas[0].id));
+                .eq('id', existingWeakAreas[0].id);
             } else {
               // Create new weak area
-              await db
-                .insert(weakAreas)
-                .values({
-                  userId: attempt.userId,
-                  topicId: quiz.topicId,
+              await supabase
+                .from('weak_areas')
+                .insert({
+                  user_id: attempt.userId,
+                  topic_id: quiz.subjectId,
                   accuracy: attempt.score,
-                  lastUpdated: new Date().toISOString()
+                  last_updated: new Date().toISOString()
                 });
             }
           }
@@ -246,128 +513,92 @@ export class DatabaseStorage implements IStorage {
       }
     }
     
-    return newAttempt;
+    return data as UserQuizAttempt;
   }
   
-  // Helper method to determine if streak should be incremented
-  private shouldIncrementStreak(lastActive?: string): boolean {
-    if (!lastActive) return true;
-    
-    const now = new Date();
-    const lastActiveDate = new Date(lastActive);
-    
-    // Check if last active was yesterday (or earlier)
-    const lastActiveDay = new Date(lastActiveDate.getFullYear(), lastActiveDate.getMonth(), lastActiveDate.getDate());
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const differenceInTime = today.getTime() - lastActiveDay.getTime();
-    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-    
-    // Increment if last active was yesterday (streak continues) or if it's the first activity
-    return differenceInDays === 1 || differenceInDays === 0;
-  }
 
   async getUserQuizAttempts(userId: number): Promise<UserQuizAttempt[]> {
-    return await db
+    const { data, error } = await supabase
+      .from('user_quiz_attempts')
       .select()
-      .from(userQuizAttempts)
-      .where(eq(userQuizAttempts.userId, userId))
-      .orderBy(desc(userQuizAttempts.startedAt));
+      .eq('user_id', userId)
+      .order('started_at', { ascending: false });
+    
+    if (error) throw new Error(error.message);
+    return data as UserQuizAttempt[];
   }
   
   // Statistiche e raccomandazioni
   async getWeakAreas(userId: number): Promise<WeakArea[]> {
-    return await db
+    const { data, error } = await supabase
+      .from('weak_areas')
       .select()
-      .from(weakAreas)
-      .where(eq(weakAreas.userId, userId))
-      .orderBy(weakAreas.accuracy);
+      .eq('user_id', userId)
+      .order('accuracy', { ascending: true });
+    
+    if (error) throw new Error(error.message);
+    return data as WeakArea[];
   }
 
-  async getStudyRecommendations(userId: number): Promise<StudyRecommendation[]> {
-    return await db
-      .select()
-      .from(studyRecommendations)
-      .where(eq(studyRecommendations.userId, userId));
-  }
-  
-  // Sfide giornaliere
-  async getDailyChallenges(date: Date): Promise<DailyChallenge[]> {
-    return await db
-      .select()
-      .from(dailyChallenges)
-      .where(eq(dailyChallenges.date, date));
-  }
 
-  async completeChallenge(userId: number, challengeId: number): Promise<UserChallengeCompletion> {
-    const [completion] = await db
-      .insert(userChallengeCompletions)
-      .values({
-        userId,
-        challengeId,
-      })
-      .returning();
-    
-    // Get the challenge details to award XP in real-time
-    const [challenge] = await db
-      .select()
-      .from(dailyChallenges)
-      .where(eq(dailyChallenges.id, challengeId));
-    
-    if (challenge) {
-      // Get current user stats
-      const user = await this.getUser(userId);
-      if (user) {
-        // Award XP for completing the challenge and update lastActive
-        await this.updateUser(user.id, {
-          xpPoints: (user.xpPoints || 0) + (challenge.xpReward || 10),
-          lastActive: new Date().toISOString(),
-          // Also update study streak
-          studyStreak: this.shouldIncrementStreak(user.lastActive) 
-            ? (user.studyStreak || 0) + 1 
-            : user.studyStreak
-        });
-      }
-    }
-    
-    return completion;
-  }
-
-  async getUserCompletedChallenges(userId: number, date: Date): Promise<UserChallengeCompletion[]> {
-    return await db
-      .select()
-      .from(userChallengeCompletions)
-      .innerJoin(dailyChallenges, eq(userChallengeCompletions.challengeId, dailyChallenges.id))
-      .where(
-        and(
-          eq(userChallengeCompletions.userId, userId),
-          eq(dailyChallenges.date, date)
-        )
-      );
-  }
   
   // Risorse di apprendimento
   async getLearningResources(topicId?: number): Promise<LearningResource[]> {
-    let query = db.select().from(learningResources);
+    let query = supabase.from('learning_resources').select();
     
     if (topicId) {
-      query = query.where(eq(learningResources.topicId, topicId));
+      query = query.eq('topic_id', topicId);
     }
     
-    return await query;
+    const { data, error } = await query;
+    
+    if (error) throw new Error(error.message);
+    return data as LearningResource[];
   }
   
   // Admin
-  async getUsers(): Promise<User[]> {
-    return await db.select().from(users);
+  async getUsers(search?: string): Promise<User[]> {
+    let query = supabase
+      .from('users')
+      .select('*');
+
+    if (search && search.trim()) {
+      const searchTerm = search.trim();
+      query = query.or(`username.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw new Error(error.message);
+    
+    // Map database fields to TypeScript interface
+    return data.map(user => ({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      password: user.password,
+      fullName: user.full_name,
+      role: user.role,
+      isPremium: user.is_premium,
+      xpPoints: user.xp_points,
+      lastActive: user.last_active ? new Date(user.last_active) : null,
+      profileImage: user.profile_image,
+      onboardingCompleted: user.onboarding_completed,
+      preferences: user.preferences,
+      createdAt: new Date(user.created_at)
+    })) as User[];
   }
 
   async promoteToAdmin(userId: number): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ role: 'admin' })
-      .where(eq(users.id, userId))
-      .returning();
-    return user;
+    const { data, error } = await supabase
+      .from('users')
+      .update({ role: 'admin' })
+      .eq('id', userId)
+      .select()
+      .single();
+    
+    if (error) return undefined;
+    return data as User;
   }
 }
 

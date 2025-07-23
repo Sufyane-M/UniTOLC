@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+      "supabase": {
+        "command": "supabase-mcp-server",
+        "env": {
+          "SUPABASE_PROJECT_REF": "nzhxmlqjthcwyfbixytw",
+          "SUPABASE_DB_PASSWORD": "Sokumul2@",
+          "SUPABASE_REGION": "eu-central-1",
+          "SUPABASE_ACCESS_TOKEN": "sbp_7ebb2e595d87b4b6104adc65a6a7ea687c4c462b",
+          "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56aHhtbHFqdGhjd3lmYml4eXR3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzQ3MzA5OSwiZXhwIjoyMDYzMDQ5MDk5fQ.oznA8nDQHBB5CBxD0oP5Ak-eoD9RSClCz8R6fUL2-uo"
+        }
+      }
+    }
+}

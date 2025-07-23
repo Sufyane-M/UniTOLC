@@ -22,8 +22,11 @@ export function log(message: string, source = "express") {
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server },
-    allowedHosts: true,
+    hmr: { 
+      server,
+      port: 4003
+    },
+    allowedHosts: ['localhost', '127.0.0.1'],
   };
 
   const vite = await createViteServer({
@@ -33,7 +36,7 @@ export async function setupVite(app: Express, server: Server) {
       ...viteLogger,
       error: (msg, options) => {
         viteLogger.error(msg, options);
-        process.exit(1);
+        // Don't exit process on Vite errors to keep server running
       },
     },
     server: serverOptions,
@@ -41,8 +44,20 @@ export async function setupVite(app: Express, server: Server) {
   });
 
   app.use(vite.middlewares);
+  
+  // Only handle HTML requests, let Vite handle everything else
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
+    
+    // Skip if this is an API request or WebSocket
+    if (url.startsWith('/api') || url.startsWith('/ws')) {
+      return next();
+    }
+    
+    // Skip if this is a file request (has extension)
+    if (path.extname(url) && !url.endsWith('.html')) {
+      return next();
+    }
 
     try {
       const clientTemplate = path.resolve(
@@ -56,7 +71,7 @@ export async function setupVite(app: Express, server: Server) {
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
       template = template.replace(
         `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`,
+        `src="/src/main.tsx?v=${nanoid()}"`
       );
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);

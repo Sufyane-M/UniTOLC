@@ -13,4 +13,5 @@ if (isDarkMode) {
   document.documentElement.classList.remove('dark');
 }
 
+// Main app rendering
 createRoot(document.getElementById("root")!).render(<App />);

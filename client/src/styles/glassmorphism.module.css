@@ -1,0 +1,176 @@
+/* Glassmorphism CSS Module for responsive navbar components */
+
+/* Base glassmorphism container */
+.glassContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated glassmorphism for interactive elements */
+.glassAnimated {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: background, border, box-shadow, transform;
+}
+
+.glassAnimated:hover {
+  transform: translateY(-1px);
+}
+
+/* Glassmorphism with enhanced border for better definition */
+.glassEnhanced {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Dark mode enhanced glassmorphism */
+.dark .glassEnhanced {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Glassmorphism for mobile overlay */
+.glassMobileOverlay {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: none;
+  box-shadow: 0 0 50px 0 rgba(31, 38, 135, 0.3);
+}
+
+.dark .glassMobileOverlay {
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Glassmorphism for dropdown items */
+.glassDropdownItem {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  transition: background 0.2s ease;
+}
+
+.glassDropdownItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .glassDropdownItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive glassmorphism adjustments */
+@media (max-width: 768px) {
+  .glassResponsive {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 24px 0 rgba(31, 38, 135, 0.3);
+  }
+
+  .dark .glassResponsive {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .glassResponsive {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+
+  .dark .glassResponsive {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+}
+
+@media (min-width: 1025px) {
+  .glassResponsive {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+
+  .dark .glassResponsive {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(10px)) {
+  .glassEnhanced,
+  .glassMobileOverlay,
+  .glassResponsive {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .glassEnhanced,
+  .dark .glassMobileOverlay,
+  .dark .glassResponsive {
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Animation keyframes for glassmorphism effects */
+@keyframes glassShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.glassShimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.glassShimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: glassShimmer 2s infinite;
+  pointer-events: none;
+}
+
+.dark .glassShimmer::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+}

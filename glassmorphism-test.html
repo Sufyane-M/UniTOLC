@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassmorphism Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Test glassmorphism utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .glass-navbar {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 2px 16px 0 rgba(31, 38, 135, 0.2);
+        }
+
+        .glass-dropdown {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.4);
+        }
+
+        .glass-mobile {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 6px 24px 0 rgba(31, 38, 135, 0.3);
+        }
+
+        .glass-hover {
+            transition: all 0.3s ease;
+        }
+
+        .glass-hover:hover {
+            background: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+            transform: translateY(-1px);
+        }
+
+        /* Responsive variants */
+        @media (max-width: 768px) {
+            .glass-responsive {
+                background: rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                box-shadow: 0 6px 24px 0 rgba(31, 38, 135, 0.3);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .glass-responsive {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            }
+        }
+
+        /* Fallback for browsers without backdrop-filter support */
+        @supports not (backdrop-filter: blur(10px)) {
+            .glass,
+            .glass-navbar,
+            .glass-dropdown,
+            .glass-mobile,
+            .glass-responsive {
+                background: rgba(255, 255, 255, 0.9);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-400 to-purple-600 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-white text-3xl font-bold mb-8">Glassmorphism Utilities Test</h1>
+        
+        <!-- Test basic glassmorphism -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="glass p-6 rounded-lg">
+                <h3 class="font-semibold mb-2 text-gray-800">Base Glass</h3>
+                <p class="text-sm text-gray-600">rgba(255, 255, 255, 0.25) with blur(10px)</p>
+            </div>
+
+            <div class="glass-navbar p-6 rounded-lg">
+                <h3 class="font-semibold mb-2 text-gray-800">Navbar Glass</h3>
+                <p class="text-sm text-gray-600">Optimized for navbar with bottom border</p>
+            </div>
+
+            <div class="glass-dropdown p-6 rounded-lg">
+                <h3 class="font-semibold mb-2 text-gray-800">Dropdown Glass</h3>
+                <p class="text-sm text-gray-600">Enhanced for dropdown menus</p>
+            </div>
+        </div>
+
+        <!-- Test mobile variant -->
+        <div class="glass-mobile p-6 rounded-lg mb-8">
+            <h3 class="font-semibold mb-2 text-gray-800">Mobile Glass</h3>
+            <p class="text-sm text-gray-600">Optimized for mobile screens with stronger effect</p>
+        </div>
+
+        <!-- Test hover effect -->
+        <div class="glass glass-hover p-6 rounded-lg mb-8 cursor-pointer">
+            <h3 class="font-semibold mb-2 text-gray-800">Hover Glass</h3>
+            <p class="text-sm text-gray-600">Hover over this element to see the smooth transition</p>
+        </div>
+
+        <!-- Test responsive variant -->
+        <div class="glass-responsive p-6 rounded-lg mb-8">
+            <h3 class="font-semibold mb-2 text-gray-800">Responsive Glass</h3>
+            <p class="text-sm text-gray-600">Changes appearance based on screen size - resize window to test</p>
+        </div>
+
+        <!-- Browser support info -->
+        <div class="glass p-6 rounded-lg">
+            <h3 class="font-semibold mb-2 text-gray-800">Browser Support</h3>
+            <p class="text-sm text-gray-600" id="support-info">Checking backdrop-filter support...</p>
+        </div>
+    </div>
+
+    <script>
+        // Check backdrop-filter support
+        const supportsBackdropFilter = 'backdropFilter' in document.documentElement.style || 
+                                      'webkitBackdropFilter' in document.documentElement.style;
+        
+        document.getElementById('support-info').textContent = 
+            `Backdrop-filter support: ${supportsBackdropFilter ? '✅ Supported' : '❌ Not supported (using fallback)'}`;
+    </script>
+</body>
+</html>

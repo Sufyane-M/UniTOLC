@@ -116,10 +116,179 @@
 }
 
 .premium-badge { 
-  box-shadow: 0 0 0 2px #FEF3C7, 0 0 0 4px #F59E0B; 
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  animation: pulse-gold 2s infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-badge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes pulse-gold {
+  0% {
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    left: 200%;
+  }
 }
 
 /* Custom font classes */
 .font-heading {
   font-family: 'Poppins', sans-serif;
+}
+
+/* Glassmorphism utilities */
+@layer utilities {
+  /* Base glassmorphism effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+
+  /* Dark mode glassmorphism variant */
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  /* Glassmorphism variants for different intensities */
+  .glass-light {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.2);
+  }
+
+  .dark .glass-light {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.5);
+  }
+
+  .dark .glass-strong {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 48px 0 rgba(0, 0, 0, 0.5);
+  }
+
+  /* Responsive glassmorphism variants */
+  .glass-mobile {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 24px 0 rgba(31, 38, 135, 0.3);
+  }
+
+  .dark .glass-mobile {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 24px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /* Navbar specific glassmorphism */
+  .glass-navbar {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 2px 16px 0 rgba(31, 38, 135, 0.2);
+  }
+
+  .dark .glass-navbar {
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  /* Dropdown/menu glassmorphism */
+  .glass-dropdown {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.4);
+  }
+
+  .dark .glass-dropdown {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  /* Hover effects for glassmorphism elements */
+  .glass-hover {
+    transition: all 0.3s ease;
+  }
+
+  .glass-hover:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+    transform: translateY(-1px);
+  }
+
+  .dark .glass-hover:hover {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+  }
+
+  /* Fallback for browsers without backdrop-filter support */
+  @supports not (backdrop-filter: blur(10px)) {
+    .glass,
+    .glass-light,
+    .glass-strong,
+    .glass-mobile,
+    .glass-navbar,
+    .glass-dropdown {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .dark .glass,
+    .dark .glass-light,
+    .dark .glass-strong,
+    .dark .glass-mobile,
+    .dark .glass-navbar,
+    .dark .glass-dropdown {
+      background: rgba(0, 0, 0, 0.9);
+    }
+  }
 }

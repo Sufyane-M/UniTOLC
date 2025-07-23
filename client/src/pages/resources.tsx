@@ -85,33 +85,7 @@ const faqs = [
   }
 ];
 
-// Blog posts per la sezione Blog
-const blogPosts = [
-  {
-    id: 1,
-    title: "5 strategie efficaci per superare il TOLC-I",
-    excerpt: "Scopri le migliori strategie per affrontare con successo il test di ammissione per Ingegneria...",
-    date: "10 giugno 2024",
-    author: "Marco Bianchi",
-    category: "Strategie di studio"
-  },
-  {
-    id: 2,
-    title: "Gestire l'ansia da esame: consigli pratici",
-    excerpt: "L'ansia da esame può compromettere le tue performance. Ecco alcuni consigli pratici per gestirla efficacemente...",
-    date: "2 giugno 2024",
-    author: "Laura Verdi",
-    category: "Benessere"
-  },
-  {
-    id: 3,
-    title: "Novità nei TOLC 2024: cosa è cambiato",
-    excerpt: "Il CISIA ha introdotto alcune modifiche nei test TOLC a partire dal 2024. Ecco tutto quello che devi sapere...",
-    date: "25 maggio 2024",
-    author: "Alessandro Neri",
-    category: "News"
-  }
-];
+
 
 // Icon per il tipo di risorsa
 const getResourceIcon = (type: string) => {
@@ -234,7 +208,6 @@ const Resources = () => {
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="mb-4">
           <TabsTrigger value="materials">Materiali</TabsTrigger>
-          <TabsTrigger value="blog">Blog</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
         </TabsList>
         
@@ -345,48 +318,7 @@ const Resources = () => {
           </div>
         </TabsContent>
         
-        {/* Blog Tab */}
-        <TabsContent value="blog">
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Cerca nel blog..."
-                    className="pl-9"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {blogPosts.map(post => (
-                <Card key={post.id} className="overflow-hidden">
-                  <div className="h-40 bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center">
-                    <BookOpen className="h-12 w-12 text-primary-300" />
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Badge variant="outline" className="text-xs">
-                        {post.category}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">{post.date}</span>
-                    </div>
-                    <CardTitle className="text-lg">{post.title}</CardTitle>
-                    <CardDescription className="line-clamp-2">{post.excerpt}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Di {post.author}</span>
-                      <Button size="sm">Leggi di più</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </TabsContent>
+
         
         {/* FAQ Tab */}
         <TabsContent value="faq">

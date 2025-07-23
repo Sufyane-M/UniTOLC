@@ -21,8 +21,9 @@ const Navbar = () => {
   const activeSection = location.startsWith("/dashboard") ? "dashboard" :
                         location.startsWith("/practice") ? "practice" :
                         location.startsWith("/analytics") ? "analytics" :
-                        location.startsWith("/resources") ? "resources" :
-                        location.startsWith("/community") ? "community" :
+                        location.startsWith("/cos-e-tolc") ? "cos-e-tolc" :
+                        location.startsWith("/faq") ? "faq" :
+                        location.startsWith("/support") ? "support" :
                         "";
 
   const handleLogout = async () => {
@@ -41,73 +42,111 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+    <nav className="bg-white/25 dark:bg-gray-900/25 backdrop-blur-lg border-b border-white/20 dark:border-gray-700/30 sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="flex items-center">
-                <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center text-white font-bold">TP</div>
-                <span className="ml-2 text-xl font-heading font-semibold text-primary dark:text-primary-400">TolcPrep</span>
-              </Link>
-            </div>
-            
-            {/* Desktop navigation */}
-            <div className="hidden sm:flex sm:space-x-6 sm:items-center sm:justify-center flex-1">
-              <Link 
-                href="/dashboard" 
-                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
-                  activeSection === "dashboard" 
-                    ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}
-              >
-                <i className="ri-dashboard-line mr-1.5"></i> Dashboard
-              </Link>
-              <Link 
-                href="/practice" 
-                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
-                  activeSection === "practice" 
-                    ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}
-              >
-                <i className="ri-edit-line mr-1.5"></i> Pratica
-              </Link>
-              <Link 
-                href="/analytics" 
-                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
-                  activeSection === "analytics" 
-                    ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}
-              >
-                <i className="ri-bar-chart-line mr-1.5"></i> Statistiche
-              </Link>
-              <Link 
-                href="/resources" 
-                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
-                  activeSection === "resources" 
-                    ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}
-              >
-                <i className="ri-book-open-line mr-1.5"></i> Risorse
-              </Link>
-              <Link 
-                href="/community" 
-                className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
-                  activeSection === "community" 
-                    ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
-                    : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
-                }`}
-              >
-                <i className="ri-team-line mr-1.5"></i> Community
-              </Link>
-            </div>
+        <div className="flex h-16">
+          <div className="flex-shrink-0 flex items-center">
+            <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center">
+              <div className="h-8 w-8 bg-gradient-to-br from-primary to-primary-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md">
+                UT
+              </div>
+              <span className="ml-2 text-xl font-heading font-semibold text-primary dark:text-primary-400">UniTOLC</span>
+            </Link>
           </div>
           
-          <div className="flex items-center">
+          {/* Desktop navigation */}
+          <div className="hidden sm:flex sm:items-center mx-auto flex-1 justify-center">
+              {!isAuthenticated ? (
+                <div className="flex space-x-6">
+                  <Link 
+                    href="/cos-e-tolc" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "cos-e-tolc" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-information-line mr-1.5"></i> Cos'è il TOLC
+                  </Link>
+                  <Link 
+                    href="/faq" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "faq" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-question-line mr-1.5"></i> FAQ
+                  </Link>
+
+                </div>
+              ) : (
+                <div className="flex space-x-6">
+                  <Link 
+                    href="/dashboard" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "dashboard" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-dashboard-line mr-1.5"></i> Dashboard
+                  </Link>
+                  <Link 
+                    href="/practice" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "practice" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-edit-line mr-1.5"></i> Pratica
+                  </Link>
+                  <Link 
+                    href="/analytics" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "analytics" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-bar-chart-line mr-1.5"></i> Statistiche
+                  </Link>
+                  <Link 
+                    href="/cos-e-tolc" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "cos-e-tolc" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-information-line mr-1.5"></i> Cos'è il TOLC
+                  </Link>
+                  <Link 
+                    href="/faq" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "faq" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-question-line mr-1.5"></i> FAQ
+                  </Link>
+                  <Link 
+                    href="/support" 
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium ${
+                      activeSection === "support" 
+                        ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" 
+                        : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-b-2 border-transparent"
+                    }`}
+                  >
+                    <i className="ri-customer-service-line mr-1.5"></i> Supporto
+                  </Link>
+                </div>
+              )}
+          </div>
+          
+          <div className="flex items-center ml-auto">
             {/* Theme toggle */}
             <Button 
               variant="ghost" 
@@ -122,18 +161,18 @@ const Navbar = () => {
               <>
                 {/* Premium button or badge */}
                 {user?.isPremium ? (
-                  <span className="ml-3 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 premium-badge dark:bg-yellow-900 dark:text-yellow-300">
-                    <i className="ri-vip-crown-fill mr-1"></i>
+                  <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-400 to-yellow-500 text-white dark:from-amber-600 dark:to-yellow-700 premium-badge">
+                    <i className="ri-vip-crown-fill mr-1.5"></i>
                     Premium
                   </span>
                 ) : (
                   <Button
                     variant="default"
                     size="sm"
-                    className="hidden sm:flex ml-3 bg-amber-500 hover:bg-amber-600 text-white dark:text-white"
+                    className="hidden sm:flex ml-3 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-white dark:from-amber-600 dark:to-yellow-700 dark:hover:from-amber-700 dark:hover:to-yellow-800"
                     onClick={() => setLocation("/settings")}
                   >
-                    <i className="ri-vip-crown-line mr-1"></i>
+                    <i className="ri-vip-crown-line mr-1.5"></i>
                     Premium
                   </Button>
                 )}
@@ -156,7 +195,7 @@ const Navbar = () => {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem onClick={() => setLocation("/settings")}>
-                        <i className="ri-user-settings-line mr-2"></i> Profilo
+                        <i className="ri-user-settings-line mr-2"></i> Il mio Profilo
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setLocation("/settings")}>
                         <i className="ri-settings-4-line mr-2"></i> Impostazioni
@@ -169,28 +208,31 @@ const Navbar = () => {
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
-                      <i className="ri-logout-box-line mr-2"></i> Esci
+                      <i className="ri-logout-box-line mr-2"></i> Logout
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
             ) : (
-              <div className="hidden sm:flex ml-3 items-center space-x-4">
-                <Button 
-                  variant="ghost" 
-                  onClick={openLoginModal}
-                  className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
-                >
-                  Accedi
-                </Button>
-                <Button
-                  variant="default"
-                  onClick={openRegisterModal}
-                  className="bg-primary hover:bg-primary-600 text-white dark:text-white"
-                >
-                  Registrati
-                </Button>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full ml-3">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-gray-200 dark:bg-gray-700">
+                        <i className="ri-user-line text-gray-600 dark:text-gray-400"></i>
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuItem onClick={openLoginModal}>
+                    <i className="ri-login-box-line mr-2"></i> Accedi
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={openRegisterModal}>
+                    <i className="ri-user-add-line mr-2"></i> Registrati
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             
             {/* Mobile menu button */}
@@ -225,56 +267,94 @@ const Navbar = () => {
                   )}
                   
                   <div className="flex flex-col space-y-2">
-                    <Link 
-                      href="/dashboard"
-                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
-                        activeSection === "dashboard" 
-                          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
-                          : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                    >
-                      <i className="ri-dashboard-line mr-2"></i> Dashboard
-                    </Link>
-                    <Link 
-                      href="/practice"
-                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
-                        activeSection === "practice" 
-                          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
-                          : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                    >
-                      <i className="ri-edit-line mr-2"></i> Pratica
-                    </Link>
-                    <Link 
-                      href="/analytics"
-                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
-                        activeSection === "analytics" 
-                          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
-                          : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                    >
-                      <i className="ri-bar-chart-line mr-2"></i> Statistiche
-                    </Link>
-                    <Link 
-                      href="/resources"
-                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
-                        activeSection === "resources" 
-                          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
-                          : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                    >
-                      <i className="ri-book-open-line mr-2"></i> Risorse
-                    </Link>
-                    <Link 
-                      href="/community"
-                      className={`flex items-center pl-3 pr-4 py-2 text-base ${
-                        activeSection === "community" 
-                          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
-                          : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                    >
-                      <i className="ri-team-line mr-2"></i> Community
-                    </Link>
+                    {!isAuthenticated ? (
+                      <>
+                        <Link 
+                          href="/cos-e-tolc"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "cos-e-tolc" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-information-line mr-2"></i> Cos'è il TOLC
+                        </Link>
+                        <Link 
+                          href="/faq"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "faq" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-question-line mr-2"></i> FAQ
+                        </Link>
+
+                      </>
+                    ) : (
+                      <>
+                        <Link 
+                          href="/dashboard"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "dashboard" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-dashboard-line mr-2"></i> Dashboard
+                        </Link>
+                        <Link 
+                          href="/practice"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "practice" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-edit-line mr-2"></i> Pratica
+                        </Link>
+                        <Link 
+                          href="/analytics"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "analytics" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-bar-chart-line mr-2"></i> Statistiche
+                        </Link>
+                        <Link 
+                          href="/cos-e-tolc"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "cos-e-tolc" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-information-line mr-2"></i> Cos'è il TOLC
+                        </Link>
+                        <Link 
+                          href="/faq"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "faq" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-question-line mr-2"></i> FAQ
+                        </Link>
+                        <Link 
+                          href="/support"
+                          className={`flex items-center pl-3 pr-4 py-2 text-base ${
+                            activeSection === "support" 
+                              ? "bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500" 
+                              : "border-l-4 border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          }`}
+                        >
+                          <i className="ri-customer-service-line mr-2"></i> Supporto
+                        </Link>
+                      </>
+                    )}
                   </div>
                   
                   {isAuthenticated && (
@@ -289,7 +369,7 @@ const Navbar = () => {
                         onClick={handleLogout}
                         className="w-full text-left flex items-center pl-3 pr-4 py-2 text-base text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
-                        <i className="ri-logout-box-line mr-2"></i> Esci
+                        <i className="ri-logout-box-line mr-2"></i> Logout
                       </button>
                     </div>
                   )}

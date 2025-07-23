@@ -86,5 +86,52 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"), 
+    require("@tailwindcss/typography"),
+    function({ addUtilities, theme, variants }) {
+      const glassmorphismUtilities = {
+        // Responsive glassmorphism utilities
+        '.glass-sm': {
+          background: 'rgba(255, 255, 255, 0.2)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          boxShadow: '0 4px 16px 0 rgba(31, 38, 135, 0.25)',
+        },
+        '.glass-md': {
+          background: 'rgba(255, 255, 255, 0.25)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.18)',
+          boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+        },
+        '.glass-lg': {
+          background: 'rgba(255, 255, 255, 0.3)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 12px 48px 0 rgba(31, 38, 135, 0.45)',
+        },
+        // Dark mode variants
+        '.dark .glass-sm': {
+          background: 'rgba(0, 0, 0, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.25)',
+        },
+        '.dark .glass-md': {
+          background: 'rgba(0, 0, 0, 0.25)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        },
+        '.dark .glass-lg': {
+          background: 'rgba(0, 0, 0, 0.3)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          boxShadow: '0 12px 48px 0 rgba(0, 0, 0, 0.45)',
+        },
+      };
+
+      addUtilities(glassmorphismUtilities, ['responsive', 'hover', 'dark']);
+    }
+  ],
 } satisfies Config;
