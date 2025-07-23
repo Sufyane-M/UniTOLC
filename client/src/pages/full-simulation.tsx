@@ -401,21 +401,7 @@ const FullSimulation = () => {
                     </Select>
                   </div>
                   
-                  {selectedExamType && (
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="agree-rules" 
-                        checked={agreeToRules}
-                        onCheckedChange={(checked) => setAgreeToRules(checked as boolean)}
-                      />
-                      <label
-                        htmlFor="agree-rules"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Ho compreso le regole ufficiali del TOLC {selectedExamTypeName} e accetto di svolgere la simulazione completa
-                      </label>
-                    </div>
-                  )}
+
                 </div>
               </CardContent>
             </Card>
@@ -481,6 +467,23 @@ const FullSimulation = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+            )}
+            
+            {/* Checkbox di conferma - spostato dopo le regole */}
+            {selectedExamType && (
+              <div className="flex items-center space-x-2 mt-6">
+                <Checkbox 
+                  id="agree-rules" 
+                  checked={agreeToRules}
+                  onCheckedChange={(checked) => setAgreeToRules(checked as boolean)}
+                />
+                <label
+                  htmlFor="agree-rules"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Ho compreso le regole ufficiali del TOLC {selectedExamTypeName} e accetto di svolgere la simulazione completa
+                </label>
+              </div>
             )}
             
             {/* Start button */}
@@ -572,4 +575,4 @@ const FullSimulation = () => {
   );
 };
 
-export default FullSimulation; 
+export default FullSimulation;
