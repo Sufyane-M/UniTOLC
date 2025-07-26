@@ -34,7 +34,7 @@ const PremiumFeatureTeaser = () => {
               </span>
             </div>
             <Button 
-              onClick={() => setLocation("/settings?tab=premium")}
+              onClick={() => setLocation("/settings?tab=abbonamento")}
               size="lg"
               className="bg-white text-amber-700 hover:bg-amber-50 hover:scale-105 transition-all duration-200 shadow-lg font-semibold px-8 py-3 text-lg"
             >

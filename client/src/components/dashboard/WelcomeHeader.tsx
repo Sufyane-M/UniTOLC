@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Sparkles, Clock, Target } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
+
 interface WelcomeHeaderProps {
   lastVisit?: string | null;
   currentStreak?: number;
@@ -60,7 +61,7 @@ const WelcomeHeader = ({ lastVisit, currentStreak = 0 }: WelcomeHeaderProps) => 
             </p>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-4">
             {currentStreak > 0 && (
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 px-3 py-1 bg-orange-100 dark:bg-orange-900/20 rounded-full">
@@ -81,16 +82,8 @@ const WelcomeHeader = ({ lastVisit, currentStreak = 0 }: WelcomeHeaderProps) => 
           </div>
         </div>
         
-        {currentStreak >= 3 && currentStreak < 7 && (
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
-              <Clock className="h-4 w-4" />
-              <span className="text-sm font-medium">
-                Ancora {7 - currentStreak} giorni per raggiungere una settimana di studio consecutivo!
-              </span>
-            </div>
-          </div>
-        )}
+
+
       </CardContent>
     </Card>
   );

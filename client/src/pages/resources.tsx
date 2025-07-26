@@ -284,7 +284,7 @@ const Resources = () => {
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">{resource.topic?.name}</span>
                         {resource.isPremium && !user?.isPremium ? (
-                          <Button size="sm" variant="outline" className="text-amber-600 hover:text-amber-700" onClick={() => setLocation("/settings?tab=premium")}>
+                          <Button size="sm" variant="outline" className="text-amber-600 hover:text-amber-700" onClick={() => setLocation("/settings?tab=abbonamento")}>
                             <Lock className="h-3.5 w-3.5 mr-1.5" /> Sblocca
                           </Button>
                         ) : (

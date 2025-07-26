@@ -89,6 +89,7 @@ export default {
   plugins: [
     require("tailwindcss-animate"), 
     require("@tailwindcss/typography"),
+    require("@tailwindcss/line-clamp"),
     function({ addUtilities, theme, variants }) {
       const glassmorphismUtilities = {
         // Responsive glassmorphism utilities

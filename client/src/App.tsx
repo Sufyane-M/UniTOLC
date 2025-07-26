@@ -26,6 +26,8 @@ import NotFound from "@/pages/not-found";
 import TopicStudy from "./pages/topic-study";
 import FullSimulation from "./pages/full-simulation";
 import TolcQuestionsPage from "./pages/TolcQuestionsPage";
+import Results from "./pages/results";
+import TestResults from "./pages/test-results";
 
 function Router() {
   return (
@@ -41,6 +43,8 @@ function Router() {
       <Route path="/faq" component={FAQ} />
       <Route path="/cos-e-tolc" component={CosETolc} />
 
+      <Route path="/results" component={Results} />
+      <Route path="/test-results" component={TestResults} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/tolc-questions" component={TolcQuestionsPage} />
       <Route path="/settings" component={Settings} />

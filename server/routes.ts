@@ -885,6 +885,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get questions for a topic
+  app.get('/api/questions/topic/:topicId', async (req, res) => {
+    try {
+      const topicId = parseInt(req.params.topicId);
+      const count = parseInt(req.query.count as string) || 10;
+      const difficulty = req.query.difficulty as string;
+      
+      if (isNaN(topicId)) {
+        return res.status(400).json({ message: 'Invalid topic ID' });
+      }
+      
+      console.log(`Fetching questions for topic ID: ${topicId}, count: ${count}, difficulty: ${difficulty}`);
+      
+      // Build query
+      let query = supabase
+        .from('questions_unified')
+        .select('*')
+        .eq('topic_id', topicId);
+      
+      // Add difficulty filter if specified
+      if (difficulty && difficulty !== 'all') {
+        query = query.eq('difficulty', difficulty);
+      }
+      
+      // Execute query with limit
+      const { data: questions, error } = await query
+        .limit(count)
+        .order('id');
+      
+      if (error) {
+        console.error('Error fetching questions:', error);
+        return res.status(500).json({ message: 'Error fetching questions', error: error.message });
+      }
+      
+      if (!questions || questions.length === 0) {
+        console.log(`No questions found for topic ID: ${topicId}`);
+        return res.status(404).json({ message: 'No questions found for this topic' });
+      }
+      
+      // Transform questions to match expected format
+      const transformedQuestions = questions.map(q => {
+        let options = [];
+        let correctAnswerIndex = 0;
+        
+        // Handle options parsing
+        if (typeof q.options === 'string') {
+          try {
+            const parsedOptions = JSON.parse(q.options);
+            options = Object.values(parsedOptions);
+            // Find correct answer index
+            if (typeof q.correct_answer === 'string') {
+              correctAnswerIndex = Object.keys(parsedOptions).indexOf(q.correct_answer);
+            }
+          } catch (e) {
+            console.error('Error parsing options for question', q.id, e);
+            options = [q.options]; // Fallback
+          }
+        } else if (Array.isArray(q.options)) {
+          options = q.options;
+          correctAnswerIndex = typeof q.correct_answer === 'number' ? q.correct_answer : 0;
+        } else if (typeof q.options === 'object' && q.options !== null) {
+          options = Object.values(q.options);
+          if (typeof q.correct_answer === 'string') {
+            correctAnswerIndex = Object.keys(q.options).indexOf(q.correct_answer);
+          }
+        }
+        
+        return {
+          id: q.id,
+          question: q.text,
+          options: options,
+          correct_answer: correctAnswerIndex >= 0 ? correctAnswerIndex : 0,
+          explanation: q.explanation,
+          difficulty: q.difficulty
+        };
+      });
+      
+      console.log(`Found ${transformedQuestions.length} questions for topic ID: ${topicId}`);
+      return res.status(200).json(transformedQuestions);
+    } catch (err) {
+      console.error('Questions endpoint error:', err);
+      return res.status(500).json({ message: 'Internal server error', error: String(err) });
+    }
+  });
+
   // Debug endpoint to see all questions in the database
   app.get('/api/debug/all-questions', async (req, res) => {
     try {

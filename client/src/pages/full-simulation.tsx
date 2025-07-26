@@ -400,8 +400,6 @@ const FullSimulation = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  
-
                 </div>
               </CardContent>
             </Card>
@@ -468,8 +466,8 @@ const FullSimulation = () => {
                 </AccordionItem>
               </Accordion>
             )}
-            
-            {/* Checkbox di conferma - spostato dopo le regole */}
+
+            {/* Agreement Checkbox */}
             {selectedExamType && (
               <div className="flex items-center space-x-2 mt-6">
                 <Checkbox 

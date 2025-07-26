@@ -7,19 +7,19 @@ import PerformanceChart from '../components/dashboard/PerformanceChart';
 import WeakAreasCard from '../components/dashboard/WeakAreasCard';
 import RecentActivity from '../components/dashboard/RecentActivity';
 import QuickActions from '../components/dashboard/QuickActions';
+
 import { useDashboardStats, useUserInfo } from '@/hooks/useDashboardStats';
-import { supabase } from '@/lib/supabase';
 
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
   const { data: userInfo, isLoading: userInfoLoading } = useUserInfo();
-
+  
   // Aggiorna last_active quando l'utente accede alla dashboard
   useEffect(() => {
     if (user?.id) {
-      supabase.rpc('update_user_last_active', { p_user_id: user.id });
+      // Semplice aggiornamento senza tracking dei traguardi
     }
   }, [user?.id]);
 
@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
         {/* Welcome Header */}
         <WelcomeHeader 
           lastVisit={userInfo?.last_active} 
-          currentStreak={userInfo?.current_streak || stats?.current_streak} 
+          currentStreak={userInfo?.current_streak || stats?.current_streak || 0}
         />
 
         {/* Stats Overview */}
@@ -64,6 +64,7 @@ const Dashboard: React.FC = () => {
           
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
+
             {/* Weak Areas */}
             <WeakAreasCard />
           </div>
